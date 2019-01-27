@@ -1,6 +1,5 @@
 # Tasty Tracks
-
-An interactive experience around music trends.
+Tasty Tracks is a mobile app which uses real-time data on song popularity to create an interactive experience around music trends.
 
 ## Getting Started
 
