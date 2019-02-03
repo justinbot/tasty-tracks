@@ -6,8 +6,8 @@ import 'package:tasty_tracks/pages/auth/landing.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class SignInPage extends StatefulWidget {
-  static final routeName = '/sign-in';
-  final pageTitle = 'Sign In';
+  static final String routeName = '/sign-in';
+  final String pageTitle = 'Sign In';
 
   @override
   _SignInPageState createState() => _SignInPageState();

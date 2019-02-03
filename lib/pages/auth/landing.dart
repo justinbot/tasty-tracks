@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
-import 'package:tasty_tracks/pages/home.dart';
+import 'package:tasty_tracks/pages/home/home.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
