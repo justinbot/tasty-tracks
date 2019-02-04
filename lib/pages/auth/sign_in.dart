@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:tasty_tracks/pages/auth/landing.dart';
+import 'package:tasty_tracks/pages/auth/sign_up.dart';
+import 'package:tasty_tracks/pages/auth/widgets/sign_in_anonymously_form.dart';
+import 'package:tasty_tracks/pages/auth/widgets/sign_in_with_email_and_password_form.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -19,8 +22,9 @@ class _SignInPageState extends State<SignInPage> {
     super.initState();
 
     // Navigate once signed in
-    _auth.onAuthStateChanged.firstWhere((user) => user != null).then((user) =>
-        Navigator.of(context).pushReplacementNamed(LandingPage.routeName));
+    _auth.onAuthStateChanged.firstWhere((user) => user != null).then((user) {
+      Navigator.of(context).pushReplacementNamed(LandingPage.routeName);
+    });
   }
 
   @override
@@ -29,53 +33,28 @@ class _SignInPageState extends State<SignInPage> {
       appBar: AppBar(
         title: Text(widget.pageTitle),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Spacer(),
-            // TODO Add logo
-            Text('Tasty Tracks'),
-            Spacer(),
-            SignInAnonymouslyForm(),
-            Spacer(flex: 2),
-          ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Spacer(),
+              Text('Tasty Tracks'),
+              Spacer(),
+              SignInWithEmailAndPasswordForm(),
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(SignUpPage.routeName);
+                  },
+                  child: Text('Create an account')),
+              Divider(),
+              SignInAnonymouslyForm(),
+              Spacer(flex: 2),
+            ],
+          ),
         ),
       ),
     );
-  }
-}
-
-class SignInAnonymouslyForm extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return SignInAnonymouslyFormState();
-  }
-}
-
-class SignInAnonymouslyFormState extends State<SignInAnonymouslyForm> {
-  bool _busy = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          RaisedButton(
-              onPressed: _signInAnonymously,
-              child: Text('Sign in anonymously')),
-        ]);
-  }
-
-  _signInAnonymously() {
-    setState(() {
-      _busy = true;
-    });
-    _auth.signInAnonymously().catchError((e) {
-      // TODO Display errors see: https://github.com/flutter/plugins/pull/775
-      String errorMessage = "Couldn't log in.";
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
-    }).whenComplete(() => setState(() => _busy = false));
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:tasty_tracks/pages/auth/landing.dart';
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
+import 'package:tasty_tracks/pages/auth/sign_up.dart';
 import 'package:tasty_tracks/pages/home/home.dart';
 
 class TastyTracksApp extends StatelessWidget {
@@ -12,6 +13,7 @@ class TastyTracksApp extends StatelessWidget {
       routes: {
         LandingPage.routeName: (BuildContext context) => LandingPage(),
         SignInPage.routeName: (BuildContext context) => SignInPage(),
+        SignUpPage.routeName: (BuildContext context) => SignUpPage(),
         HomePage.routeName: (BuildContext context) => HomePage(),
       },
       onUnknownRoute: _onUnknownRoute,
