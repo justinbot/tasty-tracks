@@ -1,8 +1,7 @@
 import 'package:spotify/spotify_io.dart';
 
-// TODO Load from config
-String clientId = '';
-String clientSecret = '';
+import 'package:tasty_tracks/config.dart';
+
 SpotifyApiCredentials credentials =
-SpotifyApiCredentials(clientId, clientSecret);
+    SpotifyApiCredentials(spotifyApiClientId, spotifyApiClientSecret);
 SpotifyApi spotifyApi = SpotifyApi(credentials);
