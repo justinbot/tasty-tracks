@@ -15,22 +15,23 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.pageTitle), actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            showSearch(
-              context: context,
-              delegate: CustomSearchDelegate(),
-            );
-          },
-        ),
-      ]),
+      appBar: AppBar(
+        title: Text('Search tracks'),
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(context: context, delegate: CustomSearchDelegate());
+            },
+          )
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Search'),
+            Text('TODO Recent searches'),
           ],
         ),
       ),
@@ -77,40 +78,72 @@ class CustomSearchDelegate extends SearchDelegate {
           stream: searchResults,
           builder: (context, AsyncSnapshot<List<Page<Object>>> snapshot) {
             if (!snapshot.hasData) {
-              return Column(
+              return Expanded(
+                  child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Center(child: CircularProgressIndicator()),
                 ],
-              );
-            } else if (snapshot.data.length == 0) {
-              return Column(
+              ));
+            } else if (snapshot.hasError) {
+              return Expanded(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text('No Results Found.'),
+                  Text('An error occured while searching :('),
                 ],
-              );
+              ));
             } else {
               // TODO Handle multiple pages
-              Page<Object> page = snapshot.data.first;
-              List<Object> results = page.items.toList();
-              return Expanded(
-                  child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: results.length,
-                itemBuilder: (context, index) {
-                  var item = results[index];
-                  if (item is TrackSimple) {
-                    return ListTile(
-                      title: Text(item.name),
-                    );
-                  }
-                },
-              ));
+              if (snapshot.data.isEmpty || snapshot.data.first.items.isEmpty) {
+                return Expanded(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('No results found :(',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.title),
+                  ],
+                ));
+              } else {
+                Page<Object> page = snapshot.data.first;
+                List<Object> results = page.items.toList();
+                return Expanded(
+                    child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: results.length,
+                  itemBuilder: (context, index) {
+                    var item = results[index];
+                    if (item is TrackSimple) {
+                      return _trackListItem(context, item);
+                    }
+                  },
+                ));
+              }
             }
           },
         ),
       ],
+    );
+  }
+
+  Widget _trackListItem(BuildContext context, TrackSimple track) {
+    // TODO Use album art for avatar
+    CircleAvatar trackAvatar = CircleAvatar(
+      backgroundColor: Colors.brown.shade800,
+    );
+
+    return ListTile(
+      leading: trackAvatar,
+      title: Text(track.name, style: Theme.of(context).textTheme.subhead),
+      // TODO Display Explicit and other data in subtitle
+      subtitle: Text(track.artists.first.name),
+      onTap: () {
+        // TODO Navigate to track details page
+      },
     );
   }
 
