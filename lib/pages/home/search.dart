@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:spotify/spotify_io.dart';
 
 import 'package:tasty_tracks/spotify_api.dart';
+import 'package:tasty_tracks/pages/track/track_details.dart';
 
 class SearchPage extends StatefulWidget {
   static final String routeName = '/search';
@@ -22,7 +23,7 @@ class _SearchPageState extends State<SearchPage> {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-              showSearch(context: context, delegate: CustomSearchDelegate());
+              showSearch(context: context, delegate: TrackSearchDelegate());
             },
           )
         ],
@@ -39,7 +40,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 }
 
-class CustomSearchDelegate extends SearchDelegate {
+class TrackSearchDelegate extends SearchDelegate {
   @override
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context);
@@ -142,7 +143,8 @@ class CustomSearchDelegate extends SearchDelegate {
       // TODO Display Explicit and other data in subtitle
       subtitle: Text(track.artists.first.name),
       onTap: () {
-        // TODO Navigate to track details page
+        // Navigate to track details page
+        Navigator.of(context).pushNamed(TrackDetailsPage.routeName + ':${track.id}');
       },
     );
   }
