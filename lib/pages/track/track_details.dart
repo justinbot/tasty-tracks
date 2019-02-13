@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
@@ -43,34 +44,45 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
     return Scaffold(
         appBar: AppBar(),
         body: SafeArea(
-          child: Column(children: <Widget>[
-            Row(
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                _trackHeader(context),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                _trackDetails(context),
-              ],
-            ),
-          ]),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 32.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _trackHeader(context),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: <Widget>[
+                    _trackDetails(context),
+                  ],
+                ),
+              ]),
         ));
   }
 
   Widget _trackHeader(BuildContext context) {
     if (_busy) {
-      return Center(child: CircularProgressIndicator());
+      // TODO Placeholder album cover
+      return Expanded(child: Center(child: CircularProgressIndicator()));
     } else {
-      String artistNames = _track.artists.map((artist) => artist.name).join(', ');
+      String artistNames =
+          _track.artists.map((artist) => artist.name).join(', ');
 
-      return Expanded(
-          child: Column(
+      return Column(
         children: <Widget>[
-          Image.network(
-            _track.album.images.first.url,
-            fit: BoxFit.cover,
-            height: 200,
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: Image.network(
+              // TODO FadeInImage
+              _track.album.images.first.url,
+              fit: BoxFit.cover,
+              height: 200,
+            ),
           ),
           Text(
             _track.name,
@@ -81,16 +93,23 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
             style: Theme.of(context).textTheme.subtitle,
           ),
         ],
-      ));
+      );
     }
   }
 
   Widget _trackDetails(BuildContext context) {
     if (_busy) {
-      return Center(child: CircularProgressIndicator());
+      return Expanded(child: Center(child: CircularProgressIndicator()));
     } else {
       return Column(children: <Widget>[
-        Text('Other stuff about this track'),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: <Widget>[
+              Text('Other stuff about this track'),
+            ],
+          ),
+        )
       ]);
     }
   }
