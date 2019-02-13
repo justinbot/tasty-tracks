@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spotify/spotify_io.dart';
+import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/spotify_api.dart';
 import 'package:tasty_tracks/pages/track/track_details.dart';
@@ -70,14 +70,17 @@ class TrackSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    var searchResults =
-        spotifyApi.search.get(query, [SearchType.track]).first(20).asStream();
+    var searchResults = spotifyApi.search
+        .get(query, [spotify.SearchType.track])
+        .first(20)
+        .asStream();
 
     return Column(
       children: <Widget>[
         StreamBuilder(
           stream: searchResults,
-          builder: (context, AsyncSnapshot<List<Page<Object>>> snapshot) {
+          builder:
+              (context, AsyncSnapshot<List<spotify.Page<Object>>> snapshot) {
             if (!snapshot.hasData) {
               return Expanded(
                   child: Column(
@@ -110,7 +113,7 @@ class TrackSearchDelegate extends SearchDelegate {
                   ],
                 ));
               } else {
-                Page<Object> page = snapshot.data.first;
+                spotify.Page<Object> page = snapshot.data.first;
                 List<Object> results = page.items.toList();
                 return Expanded(
                     child: ListView.builder(
@@ -118,7 +121,7 @@ class TrackSearchDelegate extends SearchDelegate {
                   itemCount: results.length,
                   itemBuilder: (context, index) {
                     var item = results[index];
-                    if (item is TrackSimple) {
+                    if (item is spotify.TrackSimple) {
                       return _trackListItem(context, item);
                     }
                   },
@@ -131,20 +134,22 @@ class TrackSearchDelegate extends SearchDelegate {
     );
   }
 
-  Widget _trackListItem(BuildContext context, TrackSimple track) {
+  Widget _trackListItem(BuildContext context, spotify.TrackSimple track) {
     // TODO Use album art for avatar
     CircleAvatar trackAvatar = CircleAvatar(
       backgroundColor: Colors.brown.shade800,
     );
+    String artistNames = track.artists.map((artist) => artist.name).join(', ');
 
     return ListTile(
       leading: trackAvatar,
       title: Text(track.name, style: Theme.of(context).textTheme.subhead),
       // TODO Display Explicit and other data in subtitle
-      subtitle: Text(track.artists.first.name),
+      subtitle: Text(artistNames),
       onTap: () {
         // Navigate to track details page
-        Navigator.of(context).pushNamed(TrackDetailsPage.routeName + ':${track.id}');
+        Navigator.of(context)
+            .pushNamed(TrackDetailsPage.routeName + ':${track.id}');
       },
     );
   }
