@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:tasty_tracks/theme.dart';
 import 'package:tasty_tracks/pages/auth/landing.dart';
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
 import 'package:tasty_tracks/pages/auth/sign_up.dart';
@@ -10,6 +11,7 @@ class TastyTracksApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: tastyTracksTheme,
       title: 'Tasty Tracks',
       onGenerateRoute: _handleRoute,
       routes: {
