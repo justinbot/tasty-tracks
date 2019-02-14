@@ -2,45 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/spotify_api.dart';
-import 'package:tasty_tracks/pages/track/track_details.dart';
-
-class SearchPage extends StatefulWidget {
-  static final String routeName = '/search';
-  final String pageTitle = 'Search';
-
-  @override
-  _SearchPageState createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Search tracks'),
-        centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              showSearch(context: context, delegate: TrackSearchDelegate());
-            },
-          )
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('TODO Recent searches'),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class TrackSearchDelegate extends SearchDelegate {
+  // TODO Implement searching as user types, with debouncing
+
   @override
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context);
@@ -70,6 +35,7 @@ class TrackSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
+    // TODO cache results, only fetch if query changes
     var searchResults = spotifyApi.search
         .get(query, [spotify.SearchType.track])
         .first(20)
@@ -147,9 +113,7 @@ class TrackSearchDelegate extends SearchDelegate {
       // TODO Display Explicit and other data in subtitle
       subtitle: Text(artistNames),
       onTap: () {
-        // Navigate to track details page
-        Navigator.of(context)
-            .pushNamed(TrackDetailsPage.routeName + ':${track.id}');
+        close(context, track);
       },
     );
   }

@@ -4,7 +4,7 @@ import 'package:tasty_tracks/theme.dart';
 import 'package:tasty_tracks/pages/auth/landing.dart';
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
 import 'package:tasty_tracks/pages/auth/sign_up.dart';
-import 'package:tasty_tracks/pages/home/home.dart';
+import 'package:tasty_tracks/pages/home.dart';
 import 'package:tasty_tracks/pages/track/track_details.dart';
 
 class TastyTracksApp extends StatelessWidget {
