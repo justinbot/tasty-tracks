@@ -17,6 +17,7 @@ class TrackDetailsPage extends StatefulWidget {
 class _TrackDetailsPageState extends State<TrackDetailsPage> {
   bool _busy = false;
   spotify.Track _track;
+  spotify.Album _album;
 
   @override
   void initState() {
@@ -25,17 +26,21 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
     setState(() {
       _busy = true;
     });
-    // Get track data
+    // Get full track
     spotifyApi.tracks.get(widget.trackId).then((track) {
-      setState(() {
-        _track = track;
+      // Get full album
+      spotifyApi.albums.get(track.album.id).then((album) {
+        setState(() {
+          _track = track;
+          _album = album;
+        });
+      }).whenComplete(() {
+        setState(() {
+          _busy = false;
+        });
       });
     }).catchError((error) {
       // TODO Handle error
-    }).whenComplete(() {
-      setState(() {
-        _busy = false;
-      });
     });
   }
 
@@ -56,11 +61,11 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
                     ],
                   ),
                 ),
-                Row(
-                  children: <Widget>[
-                    _trackDetails(context),
-                  ],
-                ),
+                Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(children: <Widget>[
+                      _trackDetails(context),
+                    ])),
               ]),
         ));
   }
@@ -71,7 +76,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
       return Expanded(child: Center(child: CircularProgressIndicator()));
     } else {
       String artistNames =
-          _track.artists.map((artist) => artist.name).join(', ');
+      _track.artists.map((artist) => artist.name).join(', ');
 
       return Column(
         children: <Widget>[
@@ -79,18 +84,24 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
             padding: EdgeInsets.symmetric(vertical: 16.0),
             child: Image.network(
               // TODO FadeInImage
-              _track.album.images.first.url,
+              _album.images.first.url,
               fit: BoxFit.cover,
-              height: 200,
+              height: 256,
             ),
           ),
           Text(
             _track.name,
-            style: Theme.of(context).textTheme.title,
+            style: Theme
+                .of(context)
+                .textTheme
+                .title,
           ),
           Text(
             artistNames,
-            style: Theme.of(context).textTheme.subtitle,
+            style: Theme
+                .of(context)
+                .textTheme
+                .subtitle,
           ),
         ],
       );
@@ -101,16 +112,14 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
     if (_busy) {
       return Expanded(child: Center(child: CircularProgressIndicator()));
     } else {
-      return Column(children: <Widget>[
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: <Widget>[
-              Text('Other stuff about this track'),
-            ],
-          ),
-        )
-      ]);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('Album: ${_album.name}, released ${_album.releaseDate}'),
+          Text('Popularity: ${_track.popularity}/100'),
+          Text('${_track.duration.toString()}'),
+        ],
+      );
     }
   }
 }
