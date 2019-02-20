@@ -78,6 +78,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
   }
 
   Widget _trackHeader(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     String artistNames = _track.artists.map((artist) => artist.name).join(', ');
 
     return Expanded(
@@ -92,28 +93,30 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
         SizedBox(height: 16.0),
         Text(
           _track.name,
-          style: Theme.of(context).textTheme.title,
+          style: theme.textTheme.title,
         ),
         SizedBox(height: 8.0),
         Text(
           artistNames,
-          style: Theme.of(context).textTheme.subtitle,
+          style: theme.textTheme.subtitle,
         ),
         SizedBox(height: 8.0),
         Text(
           '${_album.name}',
-          style: Theme.of(context).textTheme.subtitle,
+          style: theme.textTheme.subtitle,
         ),
         SizedBox(height: 8.0),
         Text(
           '${_album.releaseDate}',
-          style: Theme.of(context).textTheme.subtitle,
+          style: theme.textTheme.subtitle,
         ),
       ],
     ));
   }
 
   Widget _trackDetails(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -126,7 +129,12 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
                   borderRadius: BorderRadius.circular(64.0)),
               onPressed: () {}),
           SizedBox(height: 16.0),
-          Text('Popularity: ${_track.popularity}/100'),
+          Row(children: <Widget>[
+            Text('${_track.popularity}', style: theme.textTheme.display1,),
+            SizedBox(width: 4.0),
+            Text('/100 popularity'),
+          ],),
+          SizedBox(height: 8.0),
           Text('${_track.duration.toString()}'),
         ],
       ),
