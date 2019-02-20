@@ -16,23 +16,34 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Search tracks'),
-        centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              showSearch(context: context, delegate: TrackSearchDelegate())
-                  .then((selectedTrack) {
-                if (selectedTrack != null) {
-                  // Navigate to track details page
-                  Navigator.of(context).pushNamed(
-                      TrackDetailsPage.routeName + ':${selectedTrack.id}');
-                }
-              });
-            },
-          )
-        ],
+        flexibleSpace: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: RaisedButton(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.search,
+                    size: 18.0,
+                  ),
+                  Text('Search'),
+                ],
+              ),
+              color: Colors.white,
+              onPressed: () {
+                showSearch(context: context, delegate: TrackSearchDelegate())
+                    .then((selectedTrack) {
+                  if (selectedTrack != null) {
+                    // Navigate to track details page
+                    Navigator.of(context).pushNamed(
+                        TrackDetailsPage.routeName + ':${selectedTrack.id}');
+                  }
+                });
+              },
+            ),
+          ),
+        ),
       ),
       body: Center(
         child: Column(

@@ -46,80 +46,90 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(),
-        body: SafeArea(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 32.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      _trackHeader(context),
-                    ],
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(children: <Widget>[
-                      _trackDetails(context),
-                    ])),
-              ]),
-        ));
+    return Scaffold(appBar: AppBar(), body: SafeArea(child: _content()));
+  }
+
+  Widget _content() {
+    if (_busy) {
+      return Center(child: CircularProgressIndicator());
+    } else {
+      return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  _trackHeader(context),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              child: Row(
+                children: <Widget>[
+                  _trackDetails(context),
+                ],
+              ),
+            ),
+          ]);
+    }
   }
 
   Widget _trackHeader(BuildContext context) {
-    if (_busy) {
-      // TODO Placeholder album cover
-      return Expanded(child: Center(child: CircularProgressIndicator()));
-    } else {
-      String artistNames =
-      _track.artists.map((artist) => artist.name).join(', ');
+    String artistNames = _track.artists.map((artist) => artist.name).join(', ');
 
-      return Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16.0),
-            child: Image.network(
-              // TODO FadeInImage
-              _album.images.first.url,
-              fit: BoxFit.cover,
-              height: 256,
-            ),
-          ),
-          Text(
-            _track.name,
-            style: Theme
-                .of(context)
-                .textTheme
-                .title,
-          ),
-          Text(
-            artistNames,
-            style: Theme
-                .of(context)
-                .textTheme
-                .subtitle,
-          ),
-        ],
-      );
-    }
+    return Expanded(
+        child: Column(
+      children: <Widget>[
+        Image.network(
+          // TODO FadeInImage
+          _album.images.first.url,
+          fit: BoxFit.cover,
+          height: 256,
+        ),
+        SizedBox(height: 16.0),
+        Text(
+          _track.name,
+          style: Theme.of(context).textTheme.title,
+        ),
+        SizedBox(height: 8.0),
+        Text(
+          artistNames,
+          style: Theme.of(context).textTheme.subtitle,
+        ),
+        SizedBox(height: 8.0),
+        Text(
+          '${_album.name}',
+          style: Theme.of(context).textTheme.subtitle,
+        ),
+        SizedBox(height: 8.0),
+        Text(
+          '${_album.releaseDate}',
+          style: Theme.of(context).textTheme.subtitle,
+        ),
+      ],
+    ));
   }
 
   Widget _trackDetails(BuildContext context) {
-    if (_busy) {
-      return Expanded(child: Center(child: CircularProgressIndicator()));
-    } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text('Album: ${_album.name}, released ${_album.releaseDate}'),
+          RaisedButton(
+              child: Text(
+                'Place Bet',
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(64.0)),
+              onPressed: () {}),
+          SizedBox(height: 16.0),
           Text('Popularity: ${_track.popularity}/100'),
           Text('${_track.duration.toString()}'),
         ],
-      );
-    }
+      ),
+    );
   }
 }
