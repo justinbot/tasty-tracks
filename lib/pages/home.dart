@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:tasty_tracks/pages/home/search.dart';
-import 'package:tasty_tracks/pages/home/settings.dart';
+import 'package:tasty_tracks/pages/search/search.dart';
+import 'package:tasty_tracks/pages/settings.dart';
 
 class HomePage extends StatefulWidget {
   static final String routeName = '/home';
