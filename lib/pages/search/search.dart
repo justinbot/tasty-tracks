@@ -18,7 +18,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         flexibleSpace: SafeArea(
           child: Padding(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: RaisedButton(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
