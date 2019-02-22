@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
@@ -53,33 +54,40 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
     if (_busy) {
       return Center(child: CircularProgressIndicator());
     } else {
-      return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(32.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _trackHeader(context),
-                ],
+      return ListView(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(32.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _trackHeader(context),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 32),
-              child: Row(
-                children: <Widget>[
-                  _trackDetails(context),
-                ],
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 32),
+                child: Row(
+                  children: <Widget>[
+                    _trackDetails(context),
+                  ],
+                ),
               ),
-            ),
-          ]);
+            ],
+          ),
+        ],
+      );
     }
   }
 
   Widget _trackHeader(BuildContext context) {
     ThemeData theme = Theme.of(context);
     String artistNames = _track.artists.map((artist) => artist.name).join(', ');
+
+    DateTime releaseDate = DateTime.parse(_album.releaseDate);
 
     return Expanded(
         child: Column(
@@ -93,22 +101,25 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
         SizedBox(height: 16.0),
         Text(
           _track.name,
-          style: theme.textTheme.title,
+          style: theme.textTheme.headline,
+          textAlign: TextAlign.center,
         ),
-        SizedBox(height: 8.0),
+        SizedBox(height: 12.0),
         Text(
           artistNames,
-          style: theme.textTheme.subtitle,
+          style: theme.textTheme.title,
+          textAlign: TextAlign.center,
         ),
-        SizedBox(height: 8.0),
+        SizedBox(height: 12.0),
         Text(
           '${_album.name}',
           style: theme.textTheme.subtitle,
+          textAlign: TextAlign.center,
         ),
-        SizedBox(height: 8.0),
+        SizedBox(height: 4.0),
         Text(
-          '${_album.releaseDate}',
-          style: theme.textTheme.subtitle,
+          '${DateFormat.yMMMd().format(releaseDate)}',
+          style: theme.textTheme.caption,
         ),
       ],
     ));
@@ -129,13 +140,19 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
                   borderRadius: BorderRadius.circular(64.0)),
               onPressed: () {}),
           SizedBox(height: 16.0),
-          Row(children: <Widget>[
-            Text('${_track.popularity}', style: theme.textTheme.display1,),
-            SizedBox(width: 4.0),
-            Text('/100 popularity'),
-          ],),
+          Row(
+            children: <Widget>[
+              Text(
+                '${_track.popularity}',
+                style: theme.textTheme.display1,
+              ),
+              SizedBox(width: 4.0),
+              Text('/100 popularity'),
+            ],
+          ),
           SizedBox(height: 8.0),
           Text('${_track.duration.toString()}'),
+          // TODO Add additional details from track analysis
         ],
       ),
     );
