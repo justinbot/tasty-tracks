@@ -5,6 +5,7 @@ import 'package:tasty_tracks/pages/auth/landing.dart';
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
 import 'package:tasty_tracks/pages/auth/sign_up.dart';
 import 'package:tasty_tracks/pages/home.dart';
+import 'package:tasty_tracks/pages/navigation.dart';
 import 'package:tasty_tracks/pages/track/track_details.dart';
 
 class TastyTracksApp extends StatelessWidget {
@@ -16,6 +17,7 @@ class TastyTracksApp extends StatelessWidget {
       onGenerateRoute: _handleRoute,
       routes: {
         LandingPage.routeName: (BuildContext context) => LandingPage(),
+        NavigationPage.routeName: (BuildContext context) => NavigationPage(),
         SignInPage.routeName: (BuildContext context) => SignInPage(),
         SignUpPage.routeName: (BuildContext context) => SignUpPage(),
         HomePage.routeName: (BuildContext context) => HomePage(),
