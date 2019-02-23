@@ -27,12 +27,12 @@ class UserProfileSummaryState extends State<UserProfileSummary> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         userAvatar,
-        const SizedBox(width: 16.0),
+        const SizedBox(width: 32.0),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'username',
+              'username goes here',
               style: theme.textTheme.title,
             ),
             Text(

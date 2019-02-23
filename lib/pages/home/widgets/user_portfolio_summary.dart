@@ -21,28 +21,31 @@ class UserPortfolioSummaryState extends State<UserPortfolioSummary> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'My Portfolio',
-          style: theme.textTheme.headline,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 32.0),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              'Nothing in your portfolio!',
-              style: theme.textTheme.caption,
+              'My Portfolio',
+              style: theme.textTheme.headline,
+              textAlign: TextAlign.center,
+            ),
+            FlatButton(
+              onPressed: () {
+                // TODO Navigate to Portfolio Page
+              },
+              child: Text('View all'),
             ),
           ],
         ),
-        const SizedBox(height: 32.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            FlatButton(
-              onPressed: () {},
-              child: Text('View all'),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 32.0),
+              child: Text(
+                'Nothing in your portfolio!',
+                style: theme.textTheme.caption,
+              ),
             ),
           ],
         ),

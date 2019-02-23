@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
 import 'package:tasty_tracks/pages/home/home.dart';
 import 'package:tasty_tracks/pages/search/search.dart';
@@ -22,13 +23,13 @@ class _NavigationPageState extends State<NavigationPage> {
 
   final _items = <BottomNavigationBarItem>[
     BottomNavigationBarItem(
-        icon: Icon(Icons.home), title: Text('Home')
+        icon: Icon(FeatherIcons.home), title: Text('Home')
     ),
     BottomNavigationBarItem(
-        icon: Icon(Icons.search), title: Text('Search')
+        icon: Icon(FeatherIcons.search), title: Text('Search')
     ),
     BottomNavigationBarItem(
-        icon: Icon(Icons.settings), title: Text('Settings')
+        icon: Icon(FeatherIcons.settings), title: Text('Settings')
     ),
   ];
 

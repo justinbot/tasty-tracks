@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
 import 'package:tasty_tracks/pages/track/track_details.dart';
 import 'package:tasty_tracks/pages/search/widgets/track_search_delegate.dart';
@@ -24,7 +25,7 @@ class _SearchPageState extends State<SearchPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Icon(
-                    Icons.search,
+                    FeatherIcons.search,
                     size: 18.0,
                   ),
                   Text('Search'),

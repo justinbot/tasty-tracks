@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/spotify_api.dart';
@@ -16,7 +17,7 @@ class TrackSearchDelegate extends SearchDelegate {
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
-        icon: Icon(Icons.clear),
+        icon: Icon(FeatherIcons.x),
         onPressed: () {
           query = '';
         },
@@ -27,7 +28,7 @@ class TrackSearchDelegate extends SearchDelegate {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.arrow_back),
+      icon: Icon(FeatherIcons.arrowLeft),
       onPressed: () {
         close(context, null);
       },
