@@ -12,15 +12,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  UserProfileSummary _profileSummary;
-  UserTrendsSummary _userTrendsSummary;
+  UserProfileWidget _profileSummary;
+  TrendsWidget _userTrendsSummary;
 
   @override
   void initState() {
     super.initState();
 
-    _profileSummary = UserProfileSummary();
-    _userTrendsSummary = UserTrendsSummary();
+    _profileSummary = UserProfileWidget();
+    _userTrendsSummary = TrendsWidget();
   }
 
   @override

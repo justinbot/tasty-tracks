@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class UserTrendsSummary extends StatefulWidget {
+class TrendsWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return UserTrendsSummaryState();
+    return TrendsWidgetState();
   }
 }
 
-class UserTrendsSummaryState extends State<UserTrendsSummary> {
+class TrendsWidgetState extends State<TrendsWidget> {
   @override
   void initState() {
     super.initState();
-    // TODO Fetch user profile data
+    // TODO Fetch trends data
   }
 
   @override

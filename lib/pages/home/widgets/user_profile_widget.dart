@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
-class UserProfileSummary extends StatefulWidget {
+class UserProfileWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return UserProfileSummaryState();
+    return UserProfileWidgetState();
   }
 }
 
-class UserProfileSummaryState extends State<UserProfileSummary> {
+class UserProfileWidgetState extends State<UserProfileWidget> {
   @override
   void initState() {
     super.initState();
