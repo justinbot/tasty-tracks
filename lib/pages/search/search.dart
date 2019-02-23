@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
 import 'package:tasty_tracks/pages/track/track_details.dart';
-import 'package:tasty_tracks/pages/search/widgets/track_search_delegate.dart';
+import 'package:tasty_tracks/pages/search/search_delegate.dart';
 
 class SearchPage extends StatefulWidget {
   static final String routeName = '/search';

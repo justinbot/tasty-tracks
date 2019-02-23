@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
 class UserProfileSummary extends StatefulWidget {
   @override
@@ -19,15 +20,15 @@ class UserProfileSummaryState extends State<UserProfileSummary> {
     ThemeData theme = Theme.of(context);
 
     CircleAvatar userAvatar = CircleAvatar(
-      backgroundColor: theme.accentColor,
-      radius: 32.0,
+      backgroundColor: theme.primaryColor,
+      radius: 48.0,
     );
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         userAvatar,
-        const SizedBox(width: 32.0),
+        const SizedBox(width: 24.0),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -37,7 +38,7 @@ class UserProfileSummaryState extends State<UserProfileSummary> {
             ),
             Text(
               '123,456,789.00',
-              style: theme.textTheme.headline,
+              style: theme.textTheme.display1.apply(color: theme.accentColor),
             ),
           ],
         ),

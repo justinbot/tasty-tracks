@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class UserPortfolioSummary extends StatefulWidget {
+class UserTrendsSummary extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return UserPortfolioSummaryState();
+    return UserTrendsSummaryState();
   }
 }
 
-class UserPortfolioSummaryState extends State<UserPortfolioSummary> {
+class UserTrendsSummaryState extends State<UserTrendsSummary> {
   @override
   void initState() {
     super.initState();
-    // TODO Fetch user portfolio data
+    // TODO Fetch user profile data
   }
 
   @override
@@ -25,15 +25,9 @@ class UserPortfolioSummaryState extends State<UserPortfolioSummary> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              'My Portfolio',
-              style: theme.textTheme.headline,
+              'Trends',
+              style: theme.textTheme.title,
               textAlign: TextAlign.center,
-            ),
-            FlatButton(
-              onPressed: () {
-                // TODO Navigate to Portfolio Page
-              },
-              child: Text('View all'),
             ),
           ],
         ),
@@ -43,7 +37,7 @@ class UserPortfolioSummaryState extends State<UserPortfolioSummary> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 32.0),
               child: Text(
-                'Nothing in your portfolio!',
+                'No trends to show yet!',
                 style: theme.textTheme.caption,
               ),
             ),
