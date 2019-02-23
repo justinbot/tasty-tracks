@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
-import 'package:tasty_tracks/pages/home.dart';
+import 'package:tasty_tracks/pages/navigation.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -24,7 +24,7 @@ class _LandingPageState extends State<LandingPage> {
     _onAuthStateChangedSubscription = _auth.onAuthStateChanged.listen((user) {
       if (user != null) {
         // Already logged in
-        Navigator.of(context).pushReplacementNamed(HomePage.routeName);
+        Navigator.of(context).pushReplacementNamed(NavigationPage.routeName);
       } else {
         // Not logged in
         Navigator.of(context).pushReplacementNamed(SignInPage.routeName);

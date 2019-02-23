@@ -60,7 +60,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.all(32.0),
+                padding: const EdgeInsets.all(32.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -69,7 +69,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32),
+                padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Row(
                   children: <Widget>[
                     _trackDetails(context),
@@ -87,7 +87,18 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
     ThemeData theme = Theme.of(context);
     String artistNames = _track.artists.map((artist) => artist.name).join(', ');
 
-    DateTime releaseDate = DateTime.parse(_album.releaseDate);
+    // Format release date according to its precision
+    String releaseDateFormatted = '';
+    if (_album.releaseDatePrecision == 'year') {
+      DateTime releaseDate = DateTime.parse(_album.releaseDate + '-01-01');
+      releaseDateFormatted = DateFormat.y().format(releaseDate);
+    } else if (_album.releaseDatePrecision == 'month') {
+      DateTime releaseDate = DateTime.parse(_album.releaseDate + '-01');
+      releaseDateFormatted = DateFormat.yMMM().format(releaseDate);
+    } else if (_album.releaseDatePrecision == 'day') {
+      DateTime releaseDate = DateTime.parse(_album.releaseDate);
+      releaseDateFormatted = DateFormat.yMMMd().format(releaseDate);
+    }
 
     return Expanded(
         child: Column(
@@ -118,7 +129,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
         ),
         SizedBox(height: 4.0),
         Text(
-          '${DateFormat.yMMMd().format(releaseDate)}',
+          releaseDateFormatted,
           style: theme.textTheme.caption,
         ),
       ],

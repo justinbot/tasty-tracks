@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
 import 'package:tasty_tracks/pages/track/track_details.dart';
-import 'package:tasty_tracks/pages/search/widgets/track_search_delegate.dart';
+import 'package:tasty_tracks/pages/search/search_delegate.dart';
 
 class SearchPage extends StatefulWidget {
   static final String routeName = '/search';
@@ -18,13 +19,13 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         flexibleSpace: SafeArea(
           child: Padding(
-            padding: EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(10.0),
             child: RaisedButton(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Icon(
-                    Icons.search,
+                    FeatherIcons.search,
                     size: 18.0,
                   ),
                   Text('Search'),

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 ThemeData tastyTracksTheme = ThemeData(
+  accentColor: Colors.deepPurpleAccent,
   brightness: Brightness.dark,
-  primaryColor: Colors.indigo[700],
   buttonTheme: ButtonThemeData(
-      buttonColor: Colors.greenAccent, textTheme: ButtonTextTheme.primary),
-  accentColor: Colors.greenAccent,
+    buttonColor: Colors.deepPurple,
+    textTheme: ButtonTextTheme.primary,
+  ),
   canvasColor: Colors.black,
+  dividerColor: Colors.white,
+  primaryColor: Colors.blueGrey[900],
 );
