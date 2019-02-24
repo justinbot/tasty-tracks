@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
+import 'package:tasty_tracks/pages/search/widgets/album_search_item.dart';
+import 'package:tasty_tracks/pages/search/widgets/artist_search_item.dart';
+import 'package:tasty_tracks/pages/search/widgets/track_search_item.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 
 class TrackSearchDelegate extends SearchDelegate {
   // TODO Implement searching as user types, with debouncing
   // buildSuggestions
+  Future<List<spotify.Page<Object>>> searchRequest;
+  String lastQuery;
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -38,84 +43,93 @@ class TrackSearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     // TODO Handle empty query
-    // TODO cache results, only fetch if query changes
-    // Get search results
-    print('boutta API query!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    Stream<List<spotify.Page<Object>>> searchResults = spotifyApi.search
-        .get(
-          query,
-          [
-            spotify.SearchType.track,
-            spotify.SearchType.artist,
-            spotify.SearchType.album,
-          ],
-        )
-        .first(5)
-        .asStream();
+    // Only get search results when necessary
+    if (query.isEmpty) {
+      // TODO
+      return Center(
+        child: Text('TODO Recent searches'),
+      );
+    }
 
-    return StreamBuilder(
-      stream: searchResults,
-      builder: (context, AsyncSnapshot snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
+    if (searchRequest == null || query != lastQuery) {
+      searchRequest = spotifyApi.search.get(
+        query,
+        [
+          spotify.SearchType.track,
+          spotify.SearchType.artist,
+          spotify.SearchType.album,
+        ],
+      ).first(5);
+      lastQuery = query;
+    }
 
-        if (snapshot.hasError) {
+    return FutureBuilder<List<spotify.Page<Object>>>(
+      future: searchRequest,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<spotify.TrackSimple> trackResults = List();
+          List<spotify.Artist> artistResults = List();
+          List<spotify.AlbumSimple> albumResults = List();
+
+          // Separate into lists of each type of result
+          snapshot.data.forEach((spotify.Page<Object> page) {
+            trackResults.addAll(page.items.whereType<spotify.TrackSimple>());
+            artistResults.addAll(page.items.whereType<spotify.Artist>());
+            albumResults.addAll(page.items.whereType<spotify.AlbumSimple>());
+          });
+
+          // TODO Augment track results
+          return _combinedSearchResults(
+            context,
+            trackResults,
+            artistResults,
+            albumResults,
+          );
+        } else if (snapshot.hasError) {
           return Center(
             child: Text('Error getting your results :('),
           );
-        }
-
-        if (snapshot.data.isEmpty) {
+        } else {
           return Center(
-            child: Text(
-              'No results found :(',
-              style: Theme.of(context).textTheme.title,
-            ),
+            child: CircularProgressIndicator(),
           );
         }
-
-        List<spotify.TrackSimple> trackResults = List<spotify.TrackSimple>();
-        List<spotify.Artist> artistResults = List<spotify.Artist>();
-        List<spotify.AlbumSimple> albumResults = List<spotify.AlbumSimple>();
-
-        // Separate into lists of each type of result
-        snapshot.data.forEach((spotify.Page<Object> page) {
-          artistResults.addAll(page.items.whereType<spotify.Artist>());
-          albumResults.addAll(page.items.whereType<spotify.AlbumSimple>());
-          trackResults.addAll(page.items.whereType<spotify.TrackSimple>());
-        });
-
-        // TODO Handle empty results
-        // TODO Augment track results
-        // TODO Add transitions to detail pages
-        List<Widget> trackResultsItems = trackResults
-            .map((track) => _trackSearchItem(context, track))
-            .toList();
-        List<Widget> artistResultsItems = artistResults
-            .map((artist) => _artistSearchItem(context, artist))
-            .toList();
-        List<Widget> albumResultsItems = albumResults
-            .map((album) => _albumSearchItem(context, album))
-            .toList();
-
-        List<Widget> combinedResultsItems = List<Widget>();
-        combinedResultsItems.add(Text('Tracks'));
-        combinedResultsItems.addAll(trackResultsItems);
-        combinedResultsItems.add(Text('Artist'));
-        combinedResultsItems.addAll(artistResultsItems);
-        combinedResultsItems.add(Text('Albums'));
-        combinedResultsItems.addAll(albumResultsItems);
-
-        return ListView(children: combinedResultsItems);
       },
     );
+  }
+
+  Widget _combinedSearchResults(
+      BuildContext context,
+      List<spotify.TrackSimple> trackResults,
+      List<spotify.Artist> artistResults,
+      List<spotify.AlbumSimple> albumResults) {
+    // TODO Handle empty results
+    // TODO Add transitions to detail pages
+    List<Widget> combinedResultsItems = List<Widget>();
+
+    List<Widget> trackResultsItems =
+        trackResults.map((track) => _trackSearchItem(context, track)).toList();
+    List<Widget> artistResultsItems = artistResults
+        .map((artist) => ArtistSearchItem(onTap: close, artist: artist))
+        .toList();
+    List<Widget> albumResultsItems = albumResults
+        .map((album) => AlbumSearchItem(onTap: close, album: album))
+        .toList();
+
+    combinedResultsItems
+      ..add(_searchHeaderItem(context, 'Tracks'))
+      ..addAll(trackResultsItems)
+      ..add(_searchHeaderItem(context, 'Artists'))
+      ..addAll(artistResultsItems)
+      ..add(_searchHeaderItem(context, 'Albums'))
+      ..addAll(albumResultsItems);
+
+    return ListView(children: combinedResultsItems);
   }
 
   Widget _trackSearchItem(BuildContext context, spotify.TrackSimple track) {
     CircleAvatar trackAvatar = CircleAvatar(
       backgroundColor: Colors.blueGrey,
-//      backgroundImage: NetworkImage(track.album.images.first.url),
     );
     String artistNames = track.artists.map((artist) => artist.name).join(', ');
 
@@ -133,46 +147,19 @@ class TrackSearchDelegate extends SearchDelegate {
     );
   }
 
-  Widget _artistSearchItem(BuildContext context, spotify.Artist artist) {
-    CircleAvatar albumAvatar = CircleAvatar(
-      backgroundImage: NetworkImage(artist.images.first.url),
-    );
-
-    return ListTile(
-      leading: albumAvatar,
-      title: Text(
-        artist.name,
-        style: Theme.of(context).textTheme.subhead,
+  Widget _searchHeaderItem(BuildContext context, String label) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.headline,
       ),
-      subtitle: Text('${artist.popularity}'),
-      onTap: () {
-        close(context, artist);
-      },
-    );
-  }
-
-  Widget _albumSearchItem(BuildContext context, spotify.AlbumSimple album) {
-    CircleAvatar albumAvatar = CircleAvatar(
-      backgroundImage: NetworkImage(album.images.first.url),
-    );
-    String artistNames = album.artists.map((artist) => artist.name).join(', ');
-
-    return ListTile(
-      leading: albumAvatar,
-      title: Text(
-        album.name,
-        style: Theme.of(context).textTheme.subhead,
-      ),
-      subtitle: Text(artistNames),
-      onTap: () {
-        close(context, album);
-      },
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     // return buildResults(context);
-    return Center(child: Text('Suggestions go here'));
+    return Center(child: Text('Suggestions for ${query} go here'));
   }
 }
