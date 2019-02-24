@@ -115,13 +115,13 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
           style: theme.textTheme.headline,
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: 12.0),
+        SizedBox(height: 4.0),
         Text(
           artistNames,
           style: theme.textTheme.title,
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: 12.0),
+        SizedBox(height: 16.0),
         Text(
           '${_album.name}',
           style: theme.textTheme.subtitle,
