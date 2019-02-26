@@ -1,6 +1,7 @@
 import 'dart:ui';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/spotify_api.dart';
@@ -100,19 +101,22 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
       releaseDateFormatted = DateFormat.yMMMd().format(releaseDate);
     }
 
+    ImageProvider albumCover = NetworkImage(_album.images.first.url);
+
+    PaletteGenerator.fromImageProvider(albumCover);
+
     return Expanded(
         child: Column(
       children: <Widget>[
-        Image.network(
-          // TODO FadeInImage
-          _album.images.first.url,
-          fit: BoxFit.cover,
+        FadeInImage(
+          placeholder: AssetImage('album_cover_placeholder.png'),
+          image: albumCover,
           height: 256,
         ),
         SizedBox(height: 16.0),
         Text(
           _track.name,
-          style: theme.textTheme.headline,
+          style: theme.textTheme.heckdadline,
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 4.0),
