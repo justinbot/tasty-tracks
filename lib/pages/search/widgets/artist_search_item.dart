@@ -15,14 +15,27 @@ class ArtistSearchItem extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    CircleAvatar albumAvatar = CircleAvatar(
-      backgroundColor: Colors.blueGrey,
-      backgroundImage:
-          artist.images.isEmpty ? null : NetworkImage(artist.images.first.url),
-    );
+    Widget avatarImage;
+    if (artist.images.isNotEmpty) {
+      avatarImage = FadeInImage.assetNetwork(
+        placeholder: 'assets/album_cover_placeholder.png',
+        image: artist.images.first.url,
+        fit: BoxFit.cover,
+        width: 40.0,
+        height: 40.0,
+      );
+    } else {
+      avatarImage = Image.asset(
+        'assets/album_cover_placeholder.png',
+        width: 40.0,
+        height: 40.0,
+      );
+    }
 
     return ListTile(
-      leading: albumAvatar,
+      leading: ClipOval(
+        child: avatarImage,
+      ),
       title: Text(
         artist.name,
         style: theme.textTheme.subhead,

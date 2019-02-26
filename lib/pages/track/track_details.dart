@@ -7,17 +7,21 @@ import 'package:spotify/spotify_io.dart' as spotify;
 import 'package:tasty_tracks/spotify_api.dart';
 
 class TrackDetailsPage extends StatefulWidget {
+  const TrackDetailsPage({
+    Key key,
+    this.trackId,
+  }) : super(key: key);
+
   static final String routeName = '/track-details';
   final String trackId;
-
-  const TrackDetailsPage({Key key, this.trackId}) : super(key: key);
 
   @override
   _TrackDetailsPageState createState() => _TrackDetailsPageState();
 }
 
 class _TrackDetailsPageState extends State<TrackDetailsPage> {
-  bool _busy = false;
+  bool _isBusy = false;
+  bool _hasError = false;
   spotify.Track _track;
   spotify.Album _album;
   PaletteGenerator _paletteGenerator;
@@ -26,38 +30,17 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
   void initState() {
     super.initState();
 
-    setState(() {
-      _busy = true;
-    });
-    // Get full track
-    spotifyApi.tracks.get(widget.trackId).then((track) {
-      // Get full album
-      spotifyApi.albums.get(track.album.id).then((album) {
-        setState(() {
-          _track = track;
-          _album = album;
-        });
-        ImageProvider albumCover = NetworkImage(_album.images.first.url);
-        PaletteGenerator.fromImageProvider(albumCover).then((p) {
-          setState(() => _paletteGenerator = p);
-        });
-      }).whenComplete(() {
-        setState(() {
-          _busy = false;
-        });
-      });
-    }).catchError((error) {
-      // TODO Handle error
-    });
+    _loadData();
   }
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    // Get a vibrant color from the image to use as an accent
+    // Try to get a color from the palette to use as an accent
     Color trackColor = _paletteGenerator?.lightVibrantColor?.color ??
-        _paletteGenerator?.vibrantColor?.color;
+        _paletteGenerator?.vibrantColor?.color ??
+        _paletteGenerator?.lightMutedColor?.color;
     if (trackColor != null) {
       theme = theme.copyWith(accentColor: trackColor);
     }
@@ -70,7 +53,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
             actions: <Widget>[
               PopupMenuButton(
                 itemBuilder: (BuildContext context) {
-                  List<PopupMenuItem> items = [
+                  return [
                     PopupMenuItem(
                       child: Text('View album'),
                     ),
@@ -78,7 +61,6 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
                       child: Text('View artist'),
                     ),
                   ];
-                  return items;
                 },
               ),
             ],
@@ -89,9 +71,63 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
         ));
   }
 
+  _loadData() {
+    setState(() {
+      _isBusy = true;
+    });
+    // Get full track
+    spotifyApi.tracks.get(widget.trackId).then((track) {
+      // Get full album
+      spotifyApi.albums.get(track.album.id).then((album) {
+        setState(() {
+          _track = track;
+          _album = album;
+        });
+
+        if (_album.images.isNotEmpty) {
+          // Generate palette from album cover
+          ImageProvider albumCover = NetworkImage(_album.images.first.url);
+          PaletteGenerator.fromImageProvider(albumCover).then((p) {
+            setState(() {
+              _paletteGenerator = p;
+              _isBusy = false;
+            });
+          });
+        } else {
+          _isBusy = false;
+        }
+      }).catchError((error) {
+        setState(() {
+          _hasError = true;
+        });
+      });
+    }).catchError((error) {
+      setState(() {
+        _hasError = true;
+      });
+    });
+  }
+
   Widget _content() {
-    if (_busy) {
-      return Center(child: CircularProgressIndicator());
+    if (_hasError) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Error loading your track :('),
+            FlatButton(
+              onPressed: () {
+                _loadData();
+              },
+              child: Text('Try again'),
+            ),
+          ],
+        ),
+      );
+    } else if (_isBusy) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     } else {
       return ListView(
         children: <Widget>[
@@ -156,13 +192,29 @@ class TrackHeader extends StatelessWidget {
       releaseDateFormatted = DateFormat.yMMMd().format(releaseDate);
     }
 
+    Widget avatarImage;
+    if (album.images.isNotEmpty) {
+      avatarImage = FadeInImage.assetNetwork(
+        placeholder: 'assets/album_cover_placeholder.png',
+        image: album.images.first.url,
+        fit: BoxFit.cover,
+        width: 240.0,
+        height: 240.0,
+      );
+    } else {
+      avatarImage = Image.asset(
+        'assets/album_cover_placeholder.png',
+        width: 240.0,
+        height: 240.0,
+      );
+    }
+
     return Expanded(
         child: Column(
       children: <Widget>[
-        FadeInImage.assetNetwork(
-          placeholder: 'assets/album_cover_placeholder.png',
-          image: album.images.first.url,
-          height: 256,
+        Hero(
+          tag: 'avatarImageHero-${track.id}',
+          child: avatarImage,
         ),
         SizedBox(height: 16.0),
         Text(

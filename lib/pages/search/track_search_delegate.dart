@@ -4,13 +4,14 @@ import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/pages/search/widgets/album_search_item.dart';
 import 'package:tasty_tracks/pages/search/widgets/artist_search_item.dart';
+import 'package:tasty_tracks/pages/search/widgets/header_search_item.dart';
 import 'package:tasty_tracks/pages/search/widgets/track_search_item.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 
 class TrackSearchDelegate extends SearchDelegate {
   // TODO Implement searching as user types, with debouncing
   // buildSuggestions
-  Future<List<spotify.Page<Object>>> searchRequest;
+  Future<Map<spotify.SearchType, List<Object>>> searchRequest;
   String lastQuery;
 
   @override
@@ -52,38 +53,61 @@ class TrackSearchDelegate extends SearchDelegate {
     }
 
     if (searchRequest == null || query != lastQuery) {
-      searchRequest = spotifyApi.search.get(
-        query,
-        [
-          spotify.SearchType.track,
-          spotify.SearchType.artist,
-          spotify.SearchType.album,
-        ],
-      ).first(5);
+      searchRequest = Future<Map<spotify.SearchType, List<Object>>>(() {
+        return spotifyApi.search
+            .get(
+              query,
+              [
+                spotify.SearchType.track,
+                spotify.SearchType.artist,
+                spotify.SearchType.album,
+              ],
+            )
+            .first(5)
+            .then((pages) {
+              // Separate paged items into lists of each type of result
+              List<spotify.TrackSimple> trackResults = List();
+              List<spotify.Artist> artistResults = List();
+              List<spotify.AlbumSimple> albumResults = List();
+
+              pages.forEach((spotify.Page<Object> page) {
+                trackResults.addAll(
+                  page.items.whereType<spotify.TrackSimple>(),
+                );
+                artistResults.addAll(
+                  page.items.whereType<spotify.Artist>(),
+                );
+                albumResults.addAll(
+                  page.items.whereType<spotify.AlbumSimple>(),
+                );
+              });
+
+              // Get full tracks for track results
+              return spotifyApi.tracks
+                  .list(trackResults.map((t) => t.id))
+                  .then((fullTracks) {
+                Map<spotify.SearchType, List<Object>> results = {
+                  spotify.SearchType.track: fullTracks.toList(),
+                  spotify.SearchType.artist: artistResults,
+                  spotify.SearchType.album: albumResults,
+                };
+                return results;
+              });
+            });
+      });
+
       lastQuery = query;
     }
 
-    return FutureBuilder<List<spotify.Page<Object>>>(
+    return FutureBuilder<Map<spotify.SearchType, List<Object>>>(
       future: searchRequest,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<spotify.TrackSimple> trackResults = List();
-          List<spotify.Artist> artistResults = List();
-          List<spotify.AlbumSimple> albumResults = List();
-
-          // Separate into lists of each type of result
-          snapshot.data.forEach((spotify.Page<Object> page) {
-            trackResults.addAll(page.items.whereType<spotify.TrackSimple>());
-            artistResults.addAll(page.items.whereType<spotify.Artist>());
-            albumResults.addAll(page.items.whereType<spotify.AlbumSimple>());
-          });
-
-          // TODO Augment track results
           return _combinedSearchResults(
             context,
-            trackResults,
-            artistResults,
-            albumResults,
+            snapshot.data[spotify.SearchType.track],
+            snapshot.data[spotify.SearchType.artist],
+            snapshot.data[spotify.SearchType.album],
           );
         } else if (snapshot.hasError) {
           return Center(
@@ -105,10 +129,10 @@ class TrackSearchDelegate extends SearchDelegate {
       List<spotify.AlbumSimple> albumResults) {
     // TODO Handle empty results
     // TODO Add transitions to detail pages
-    List<Widget> combinedResultsItems = List<Widget>();
 
-    List<Widget> trackResultsItems =
-        trackResults.map((track) => _trackSearchItem(context, track)).toList();
+    List<Widget> trackResultsItems = trackResults
+        .map((track) => TrackSearchItem(onTap: close, track: track))
+        .toList();
     List<Widget> artistResultsItems = artistResults
         .map((artist) => ArtistSearchItem(onTap: close, artist: artist))
         .toList();
@@ -116,54 +140,22 @@ class TrackSearchDelegate extends SearchDelegate {
         .map((album) => AlbumSearchItem(onTap: close, album: album))
         .toList();
 
+    List<Widget> combinedResultsItems = List();
     combinedResultsItems
-      ..add(_searchHeaderItem(context, 'Tracks'))
+      ..add(HeaderSearchItem(
+        label: 'Tracks',
+      ))
       ..addAll(trackResultsItems)
-      ..add(_searchHeaderItem(context, 'Artists'))
+      ..add(HeaderSearchItem(
+        label: 'Artists',
+      ))
       ..addAll(artistResultsItems)
-      ..add(_searchHeaderItem(context, 'Albums'))
+      ..add(HeaderSearchItem(
+        label: 'Albums',
+      ))
       ..addAll(albumResultsItems);
 
     return ListView(children: combinedResultsItems);
-  }
-
-  Widget _trackSearchItem(BuildContext context, spotify.TrackSimple track) {
-    CircleAvatar trackAvatar = CircleAvatar(
-      backgroundColor: Colors.blueGrey,
-    );
-    String artistNames = track.artists.map((artist) => artist.name).join(', ');
-
-    return ListTile(
-      leading: trackAvatar,
-      title: Text(
-        track.name,
-        style: Theme.of(context).textTheme.subhead,
-      ),
-      // TODO Display Explicit and other data in subtitle
-      subtitle: Text(artistNames),
-      onTap: () {
-        close(context, track);
-      },
-    );
-  }
-
-  Widget _searchHeaderItem(BuildContext context, String label) {
-    return Padding(
-      padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            label,
-            style: Theme.of(context).textTheme.title,
-          ),
-          FlatButton(
-            onPressed: () {},
-            child: Text('See all'),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
