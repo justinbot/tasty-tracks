@@ -18,9 +18,11 @@ class AlbumSearchItem extends StatelessWidget {
     Widget avatarImage;
     if (album.images.isNotEmpty) {
       avatarImage = FadeInImage.assetNetwork(
-        placeholder: 'assets/album_cover_placeholder.png',
         image: album.images.first.url,
+        placeholder: 'assets/album_cover_placeholder.png',
         fit: BoxFit.cover,
+        fadeOutDuration: const Duration(milliseconds: 100),
+        fadeInDuration: const Duration(milliseconds: 300),
         width: 40.0,
         height: 40.0,
       );

@@ -1,6 +1,6 @@
 import 'package:spotify/spotify_io.dart' as spotify;
 
-import 'package:tasty_tracks/config.dart';
+import 'package:tasty_tracks/constants/config.dart';
 
 spotify.SpotifyApiCredentials credentials =
     spotify.SpotifyApiCredentials(spotifyApiClientId, spotifyApiClientSecret);

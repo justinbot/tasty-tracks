@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:tasty_tracks/theme.dart';
+import 'package:tasty_tracks/constants/theme.dart';
 import 'package:tasty_tracks/pages/auth/landing.dart';
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
 import 'package:tasty_tracks/pages/auth/sign_up.dart';
