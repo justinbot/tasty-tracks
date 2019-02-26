@@ -149,10 +149,19 @@ class TrackSearchDelegate extends SearchDelegate {
 
   Widget _searchHeaderItem(BuildContext context, String label) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.headline,
+      padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            label,
+            style: Theme.of(context).textTheme.title,
+          ),
+          FlatButton(
+            onPressed: () {},
+            child: Text('See all'),
+          ),
+        ],
       ),
     );
   }

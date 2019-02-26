@@ -13,6 +13,8 @@ class ArtistSearchItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     CircleAvatar albumAvatar = CircleAvatar(
       backgroundColor: Colors.blueGrey,
       backgroundImage:
@@ -23,9 +25,15 @@ class ArtistSearchItem extends StatelessWidget {
       leading: albumAvatar,
       title: Text(
         artist.name,
-        style: Theme.of(context).textTheme.subhead,
+        style: theme.textTheme.subhead,
       ),
-      subtitle: Text('${artist.popularity}'),
+      subtitle: Row(
+        children: <Widget>[
+          Text(
+            '${artist.popularity}/100 popularity',
+          ),
+        ],
+      ),
       onTap: () {
         onTap(context, artist);
       },

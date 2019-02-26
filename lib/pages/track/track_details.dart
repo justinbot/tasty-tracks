@@ -20,6 +20,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
   bool _busy = false;
   spotify.Track _track;
   spotify.Album _album;
+  PaletteGenerator _paletteGenerator;
 
   @override
   void initState() {
@@ -36,6 +37,10 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
           _track = track;
           _album = album;
         });
+        ImageProvider albumCover = NetworkImage(_album.images.first.url);
+        PaletteGenerator.fromImageProvider(albumCover).then((p) {
+          setState(() => _paletteGenerator = p);
+        });
       }).whenComplete(() {
         setState(() {
           _busy = false;
@@ -48,7 +53,40 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(), body: SafeArea(child: _content()));
+    ThemeData theme = Theme.of(context);
+
+    // Get a vibrant color from the image to use as an accent
+    Color trackColor = _paletteGenerator?.lightVibrantColor?.color ??
+        _paletteGenerator?.vibrantColor?.color;
+    if (trackColor != null) {
+      theme = theme.copyWith(accentColor: trackColor);
+    }
+
+    return Theme(
+        data: theme,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: theme.canvasColor,
+            actions: <Widget>[
+              PopupMenuButton(
+                itemBuilder: (BuildContext context) {
+                  List<PopupMenuItem> items = [
+                    PopupMenuItem(
+                      child: Text('View album'),
+                    ),
+                    PopupMenuItem(
+                      child: Text('View artist'),
+                    ),
+                  ];
+                  return items;
+                },
+              ),
+            ],
+          ),
+          body: SafeArea(
+            child: _content(),
+          ),
+        ));
   }
 
   Widget _content() {
@@ -65,7 +103,10 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    _trackHeader(context),
+                    TrackHeader(
+                      track: _track,
+                      album: _album,
+                    ),
                   ],
                 ),
               ),
@@ -73,7 +114,9 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Row(
                   children: <Widget>[
-                    _trackDetails(context),
+                    TrackDetails(
+                      track: _track,
+                    )
                   ],
                 ),
               ),
@@ -83,51 +126,59 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
       );
     }
   }
+}
 
-  Widget _trackHeader(BuildContext context) {
+class TrackHeader extends StatelessWidget {
+  const TrackHeader({
+    Key key,
+    this.track,
+    this.album,
+  }) : super(key: key);
+
+  final spotify.Track track;
+  final spotify.Album album;
+
+  @override
+  Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    String artistNames = _track.artists.map((artist) => artist.name).join(', ');
+    String artistNames = track.artists.map((artist) => artist.name).join(', ');
 
     // Format release date according to its precision
     String releaseDateFormatted = '';
-    if (_album.releaseDatePrecision == 'year') {
-      DateTime releaseDate = DateTime.parse(_album.releaseDate + '-01-01');
+    if (album.releaseDatePrecision == 'year') {
+      DateTime releaseDate = DateTime.parse(album.releaseDate + '-01-01');
       releaseDateFormatted = DateFormat.y().format(releaseDate);
-    } else if (_album.releaseDatePrecision == 'month') {
-      DateTime releaseDate = DateTime.parse(_album.releaseDate + '-01');
+    } else if (album.releaseDatePrecision == 'month') {
+      DateTime releaseDate = DateTime.parse(album.releaseDate + '-01');
       releaseDateFormatted = DateFormat.yMMM().format(releaseDate);
-    } else if (_album.releaseDatePrecision == 'day') {
-      DateTime releaseDate = DateTime.parse(_album.releaseDate);
+    } else if (album.releaseDatePrecision == 'day') {
+      DateTime releaseDate = DateTime.parse(album.releaseDate);
       releaseDateFormatted = DateFormat.yMMMd().format(releaseDate);
     }
-
-    ImageProvider albumCover = NetworkImage(_album.images.first.url);
-
-    PaletteGenerator.fromImageProvider(albumCover);
 
     return Expanded(
         child: Column(
       children: <Widget>[
-        FadeInImage(
-          placeholder: AssetImage('album_cover_placeholder.png'),
-          image: albumCover,
+        FadeInImage.assetNetwork(
+          placeholder: 'assets/album_cover_placeholder.png',
+          image: album.images.first.url,
           height: 256,
         ),
         SizedBox(height: 16.0),
         Text(
-          _track.name,
-          style: theme.textTheme.heckdadline,
+          track.name,
+          style: theme.textTheme.headline,
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 4.0),
         Text(
           artistNames,
-          style: theme.textTheme.title,
+          style: theme.textTheme.subhead,
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 16.0),
         Text(
-          '${_album.name}',
+          '${album.name}',
           style: theme.textTheme.subtitle,
           textAlign: TextAlign.center,
         ),
@@ -139,9 +190,19 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
       ],
     ));
   }
+}
 
-  Widget _trackDetails(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+class TrackDetails extends StatelessWidget {
+  const TrackDetails({
+    Key key,
+    this.track,
+  }) : super(key: key);
+
+  final spotify.Track track;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
 
     return Expanded(
       child: Column(
@@ -151,6 +212,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
               child: Text(
                 'Place Bet',
               ),
+              color: theme.accentColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(64.0)),
               onPressed: () {}),
@@ -158,15 +220,15 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
           Row(
             children: <Widget>[
               Text(
-                '${_track.popularity}',
-                style: theme.textTheme.display1,
+                '${track.popularity}',
+                style: theme.textTheme.display2,
               ),
               SizedBox(width: 4.0),
               Text('/100 popularity'),
             ],
           ),
           SizedBox(height: 8.0),
-          Text('${_track.duration.toString()}'),
+          Text('${track.duration.toString()}'),
           // TODO Add additional details from track analysis
         ],
       ),
