@@ -10,13 +10,13 @@ import 'package:tasty_tracks/pages/search/widgets/track_search_item.dart';
 class SearchResults extends StatelessWidget {
   const SearchResults({
     Key key,
-    this.onTap,
+    this.onTapItem,
     this.tracks,
     this.artists,
     this.albums,
   }) : super(key: key);
 
-  final onTap;
+  final onTapItem;
   final List<spotify.Track> tracks;
   final List<spotify.Artist> artists;
   final List<spotify.AlbumSimple> albums;
@@ -31,7 +31,7 @@ class SearchResults extends StatelessWidget {
     if (tracks.isNotEmpty) {
       hasResults = true;
       Iterable<Widget> trackItems = tracks.map((track) => TrackSearchItem(
-            onTap: onTap,
+            onTap: _handleSelectedItem,
             track: track,
           ));
 
@@ -45,7 +45,7 @@ class SearchResults extends StatelessWidget {
     if (artists.isNotEmpty) {
       hasResults = true;
       Iterable<Widget> artistItems = artists.map((artist) => ArtistSearchItem(
-            onTap: onTap,
+            onTap: _handleSelectedItem,
             artist: artist,
           ));
 
@@ -59,7 +59,7 @@ class SearchResults extends StatelessWidget {
     if (albums.isNotEmpty) {
       hasResults = true;
       Iterable<Widget> albumItems = albums.map((album) => AlbumSearchItem(
-            onTap: onTap,
+            onTap: _handleSelectedItem,
             album: album,
           ));
 
@@ -79,13 +79,22 @@ class SearchResults extends StatelessWidget {
               FeatherIcons.flag,
               size: 64.0,
             ),
-            SizedBox(height: 32.0,),
-            Text('No results found for your search :(', style: theme.textTheme.subhead,),
+            SizedBox(
+              height: 32.0,
+            ),
+            Text(
+              'No results found for your search :(',
+              style: theme.textTheme.subhead,
+            ),
           ],
         ),
       );
     } else {
       return ListView(children: combinedResultsItems);
     }
+  }
+
+  _handleSelectedItem(Object result) {
+    onTapItem(result);
   }
 }

@@ -50,7 +50,7 @@ class ArtistSearchItem extends StatelessWidget {
         ],
       ),
       onTap: () {
-        onTap(context, artist);
+        onTap(artist);
       },
     );
   }

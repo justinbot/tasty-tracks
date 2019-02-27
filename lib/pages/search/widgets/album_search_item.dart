@@ -44,7 +44,7 @@ class AlbumSearchItem extends StatelessWidget {
       ),
       subtitle: Text(artistNames),
       onTap: () {
-        onTap(context, album);
+        onTap(album);
       },
     );
   }

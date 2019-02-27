@@ -48,7 +48,7 @@ class TrackSearchItem extends StatelessWidget {
       // TODO Display Explicit and other data in subtitle
       subtitle: Text(artistNames),
       onTap: () {
-        onTap(context, track);
+        onTap(track);
       },
     );
   }
