@@ -41,7 +41,7 @@ class MusicSearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     if (query.isEmpty) {
-      // TODO Show history if empty query
+      // TODO
       return Center(
         child: Text('TODO Recent searches'),
       );
@@ -54,8 +54,6 @@ class MusicSearchDelegate extends SearchDelegate {
           if (snapshot.hasData) {
             return SearchResults(
               onTapItem: (selectedItem) {
-                // TODO
-                // history.add(selectedItem);
                 close(context, selectedItem);
               },
               tracks: snapshot.data[spotify.SearchType.track],

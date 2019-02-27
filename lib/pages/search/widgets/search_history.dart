@@ -107,7 +107,7 @@ class SearchHistory extends StatelessWidget {
                         height: 32.0,
                       ),
                       Text(
-                        'Search for tracks, artists, and albums.',
+                        'Search for tasty tracks, artists, and albums.',
                         style: theme.textTheme.subhead,
                       ),
                     ],
@@ -118,8 +118,10 @@ class SearchHistory extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(top: 16.0),
                     child: FlatButton(
-                      onPressed: () {},
-                      child: Text('Clear recent searches'),
+                      onPressed: () {
+                        history.clear();
+                      },
+                      child: Text('Clear recent searches', style: theme.textTheme.caption,),
                     ),
                   ),
                 );

@@ -20,15 +20,6 @@ class SearchHistoryModel extends Model {
 
   SharedPreferences _prefs;
 
-//  UnmodifiableListView<String> get albumItems =>
-//      UnmodifiableListView(historyItems[albumPrefsKey]);
-//
-//  UnmodifiableListView<String> get artistItems =>
-//      UnmodifiableListView(historyItems[artistPrefsKey]);
-//
-//  UnmodifiableListView<String> get trackItems =>
-//      UnmodifiableListView(historyItems[trackPrefsKey]);
-
   /// Save these items to persistent storage
   _save(String prefsKey) {
     SharedPreferences.getInstance().then((prefs) {
@@ -43,12 +34,9 @@ class SearchHistoryModel extends Model {
     _prefs = await SharedPreferences.getInstance();
 
     historyItems[albumPrefsKey] = _prefs.getStringList(albumPrefsKey) ?? List();
-    print(historyItems[albumPrefsKey]);
     historyItems[artistPrefsKey] =
         _prefs.getStringList(artistPrefsKey) ?? List();
-    print(historyItems[artistPrefsKey]);
     historyItems[trackPrefsKey] = _prefs.getStringList(trackPrefsKey) ?? List();
-    print(historyItems[trackPrefsKey]);
 
     notifyListeners();
   }
@@ -58,7 +46,6 @@ class SearchHistoryModel extends Model {
     if (albumIds.isEmpty) {
       return UnmodifiableListView([]);
     } else {
-      print('FETCHING HISTORY ALBUMS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
       Iterable<spotify.Album> albums = await spotifyApi.albums.list(albumIds);
       return UnmodifiableListView(albums);
     }
@@ -69,8 +56,8 @@ class SearchHistoryModel extends Model {
     if (artistIds.isEmpty) {
       return UnmodifiableListView([]);
     } else {
-      print('FETCHING HISTORY ARTISTS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-      Iterable<spotify.Artist> artists = await spotifyApi.artists.list(artistIds);
+      Iterable<spotify.Artist> artists =
+          await spotifyApi.artists.list(artistIds);
       return UnmodifiableListView(artists);
     }
   }
@@ -78,47 +65,39 @@ class SearchHistoryModel extends Model {
   Future<UnmodifiableListView<spotify.Track>> trackItems() async {
     List<String> trackIds = historyItems[trackPrefsKey];
     if (trackIds.isEmpty) {
-      print('No tracks items');
       return UnmodifiableListView([]);
     } else {
-      print('FETCHING HISTORY TRACKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
       Iterable<spotify.Track> tracks = await spotifyApi.tracks.list(trackIds);
       return UnmodifiableListView(tracks);
     }
   }
 
-  add(Object item) {
-    print('Adding item to history!');
-    SharedPreferences.getInstance().then((prefs) {
-      String itemId;
-      String prefsKey;
-      if (item is spotify.TrackSimple) {
-        itemId = item.id;
-        prefsKey = trackPrefsKey;
-      } else if (item is spotify.ArtistSimple) {
-        itemId = item.id;
-        prefsKey = artistPrefsKey;
-      } else if (item is spotify.AlbumSimple) {
-        itemId = item.id;
-        prefsKey = albumPrefsKey;
+  _addItem(String itemId, String prefsKey) {
+    List<String> newItems = historyItems[prefsKey];
+    if (!newItems.contains(itemId)) {
+      newItems.add(itemId);
+      // Cap to max items
+      if (newItems.length > _maxItems) {
+        newItems.removeAt(0);
       }
 
-      if (prefsKey != null) {
-        List<String> newItems = historyItems[prefsKey];
-        if (!newItems.contains(itemId)) {
-          newItems.add(itemId);
-          // Cap to max items
-          if (newItems.length > _maxItems) {
-            newItems.removeAt(0);
-          }
+      historyItems[prefsKey] = newItems;
+      _save(prefsKey);
 
-          historyItems[prefsKey] = newItems;
-          _save(prefsKey);
+      notifyListeners();
+    }
+  }
 
-          notifyListeners();
-        }
-      }
-    });
+  addAlbum(spotify.AlbumSimple album) {
+    _addItem(album.id, albumPrefsKey);
+  }
+
+  addArtist(spotify.ArtistSimple artist) {
+    _addItem(artist.id, artistPrefsKey);
+  }
+
+  addTrack(spotify.TrackSimple track) {
+    _addItem(track.id, trackPrefsKey);
   }
 
   clear() {

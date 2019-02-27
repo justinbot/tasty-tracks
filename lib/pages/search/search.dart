@@ -30,22 +30,6 @@ class _SearchPageState extends State<SearchPage> {
     history.loadItems();
   }
 
-  _handleSelectedItem(Object selectedItem) {
-    if (selectedItem != null) {
-      // Navigate to details page for selected item
-      if (selectedItem is spotify.TrackSimple) {
-        Navigator.of(context)
-            .pushNamed(TrackDetailsPage.routeName + ':${selectedItem.id}');
-      } else if (selectedItem is spotify.AlbumSimple) {
-        // TODO
-        print('TODO Album details');
-      } else if (selectedItem is spotify.Artist) {
-        // TODO
-        print('TODO Artist details');
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return ScopedModel<SearchHistoryModel>(
@@ -68,6 +52,8 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 color: Colors.white,
                 onPressed: () {
+                  // TODO When navigating back from a search result, search bar should be active
+                  // TODO Consider not using showSearch for better behavior
                   showSearch(
                     context: context,
                     delegate: MusicSearchDelegate(),
@@ -84,5 +70,24 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ),
     );
+  }
+
+  _handleSelectedItem(Object selectedItem) {
+    if (selectedItem != null) {
+      // Navigate to details page for selected item
+      if (selectedItem is spotify.AlbumSimple) {
+        history.addAlbum(selectedItem);
+        // TODO
+        print('TODO Album details');
+      } else if (selectedItem is spotify.ArtistSimple) {
+        history.addArtist(selectedItem);
+        // TODO
+        print('TODO Artist details');
+      } else if (selectedItem is spotify.TrackSimple) {
+        history.addTrack(selectedItem);
+        Navigator.of(context)
+            .pushNamed(TrackDetailsPage.routeName + ':${selectedItem.id}');
+      }
+    }
   }
 }
