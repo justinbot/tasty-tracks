@@ -24,7 +24,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
   bool _hasError = false;
   spotify.Track _track;
   spotify.Album _album;
-  PaletteGenerator _paletteGenerator;
+  PaletteGenerator _palette;
 
   @override
   void initState() {
@@ -37,12 +37,14 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    // Try to get a color from the palette to use as an accent
-    Color trackColor = _paletteGenerator?.lightVibrantColor?.color ??
-        _paletteGenerator?.vibrantColor?.color ??
-        _paletteGenerator?.lightMutedColor?.color;
-    if (trackColor != null) {
-      theme = theme.copyWith(accentColor: trackColor);
+    if (_palette != null) {
+      // Try to get a color from the palette to use as an accent
+      Color trackColor = _palette.lightVibrantColor?.color ??
+          _palette.vibrantColor?.color ??
+          _palette.lightMutedColor?.color;
+      if (trackColor != null) {
+        theme = theme.copyWith(accentColor: trackColor);
+      }
     }
 
     return Theme(
@@ -71,41 +73,35 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
         ));
   }
 
-  _loadData() {
-    setState(() {
-      _isBusy = true;
-    });
-    // Get full track
-    spotifyApi.tracks.get(widget.trackId).then((track) {
-      // Get full album
-      spotifyApi.albums.get(track.album.id).then((album) {
-        setState(() {
-          _track = track;
-          _album = album;
-        });
+  _loadData() async {
+    setState(() => _isBusy = true);
 
-        if (_album.images.isNotEmpty) {
-          // Generate palette from album cover
-          ImageProvider albumCover = NetworkImage(_album.images.first.url);
-          PaletteGenerator.fromImageProvider(albumCover).then((p) {
-            setState(() {
-              _paletteGenerator = p;
-              _isBusy = false;
-            });
-          });
-        } else {
-          _isBusy = false;
-        }
-      }).catchError((error) {
-        setState(() {
-          _hasError = true;
-        });
-      });
-    }).catchError((error) {
+    try {
+      spotify.Track track = await spotifyApi.tracks.get(widget.trackId);
+      spotify.Album album = await spotifyApi.albums.get(track.album.id);
+      PaletteGenerator palette;
+      if (album.images.isNotEmpty) {
+        // Generate palette from album cover
+        // TODO Causes stutter when loading with larger images
+        // This is why we use the last (narrowest) image
+        ImageProvider albumCover = NetworkImage(album.images.last.url);
+        palette = await PaletteGenerator.fromImageProvider(albumCover);
+      }
+
       setState(() {
+        _track = track;
+        _album = album;
+        _isBusy = false;
+        if (palette != null) {
+          _palette = palette;
+        }
+      });
+    } catch (e) {
+      setState(() {
+        _isBusy = false;
         _hasError = true;
       });
-    });
+    }
   }
 
   Widget _content() {
@@ -198,14 +194,14 @@ class TrackHeader extends StatelessWidget {
         placeholder: 'assets/album_cover_placeholder.png',
         image: album.images.first.url,
         fit: BoxFit.cover,
-        width: 240.0,
-        height: 240.0,
+        width: 300.0,
+        height: 300.0,
       );
     } else {
       avatarImage = Image.asset(
         'assets/album_cover_placeholder.png',
-        width: 240.0,
-        height: 240.0,
+        width: 300.0,
+        height: 300.0,
       );
     }
 
