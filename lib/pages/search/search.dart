@@ -1,8 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
+import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:spotify/spotify_io.dart' as spotify;
 
+import 'package:tasty_tracks/models/search_history_model.dart';
+import 'package:tasty_tracks/pages/search/music_search_delegate.dart';
+import 'package:tasty_tracks/pages/search/widgets/search_history.dart';
 import 'package:tasty_tracks/pages/track/track_details.dart';
-import 'package:tasty_tracks/pages/search/search_delegate.dart';
 
 class SearchPage extends StatefulWidget {
   static final String routeName = '/search';
@@ -13,47 +17,77 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  List<spotify.Track> searchHistoryTracks = List();
+  List<spotify.Artist> searchHistoryArtists = List();
+  List<spotify.Album> searchHistoryAlbums = List();
+
+  final history = SearchHistoryModel();
+
+  @override
+  initState() {
+    super.initState();
+
+    history.loadItems();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: RaisedButton(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    FeatherIcons.search,
-                    size: 18.0,
-                  ),
-                  Text('Search'),
-                ],
+    return ScopedModel<SearchHistoryModel>(
+      model: history,
+      child: Scaffold(
+        appBar: AppBar(
+          flexibleSpace: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: RaisedButton(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      FeatherIcons.search,
+                      size: 18.0,
+                    ),
+                    Text('Search'),
+                  ],
+                ),
+                color: Colors.white,
+                onPressed: () {
+                  // TODO When navigating back from a search result, search bar should be active
+                  // TODO Consider not using showSearch for better behavior
+                  showSearch(
+                    context: context,
+                    delegate: MusicSearchDelegate(),
+                  ).then((selectedItem) {
+                    _handleSelectedItem(selectedItem);
+                  });
+                },
               ),
-              color: Colors.white,
-              onPressed: () {
-                showSearch(context: context, delegate: TrackSearchDelegate())
-                    .then((selectedTrack) {
-                  if (selectedTrack != null) {
-                    // Navigate to track details page
-                    Navigator.of(context).pushNamed(
-                        TrackDetailsPage.routeName + ':${selectedTrack.id}');
-                  }
-                });
-              },
             ),
           ),
         ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('TODO Recent searches'),
-          ],
+        body: SearchHistory(
+          onTapItem: _handleSelectedItem,
         ),
       ),
     );
+  }
+
+  _handleSelectedItem(Object selectedItem) {
+    if (selectedItem != null) {
+      // Navigate to details page for selected item
+      if (selectedItem is spotify.AlbumSimple) {
+        history.addAlbum(selectedItem);
+        // TODO
+        print('TODO Album details');
+      } else if (selectedItem is spotify.ArtistSimple) {
+        history.addArtist(selectedItem);
+        // TODO
+        print('TODO Artist details');
+      } else if (selectedItem is spotify.TrackSimple) {
+        history.addTrack(selectedItem);
+        Navigator.of(context)
+            .pushNamed(TrackDetailsPage.routeName + ':${selectedItem.id}');
+      }
+    }
   }
 }
