@@ -57,7 +57,8 @@ flutter:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
   assets:
-   - assets/album_cover_placeholder.png
+   - assets/album_image_placeholder.png
+   - assets/artist_image_placeholder.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

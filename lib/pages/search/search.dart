@@ -6,7 +6,7 @@ import 'package:spotify/spotify_io.dart' as spotify;
 import 'package:tasty_tracks/models/search_history_model.dart';
 import 'package:tasty_tracks/pages/search/music_search_delegate.dart';
 import 'package:tasty_tracks/pages/search/widgets/search_history.dart';
-import 'package:tasty_tracks/pages/track/track_details.dart';
+import 'package:tasty_tracks/pages/track_details.dart';
 
 class SearchPage extends StatefulWidget {
   static final String routeName = '/search';

@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
-class AlbumImage extends StatelessWidget {
-  const AlbumImage({
+class ArtistImage extends StatelessWidget {
+  const ArtistImage({
     Key key,
-    this.album,
+    this.artist,
     this.diameter,
     this.rounded = false,
   }) : super(key: key);
 
-  final spotify.AlbumSimple album;
+  final spotify.Artist artist;
   final double diameter;
   final bool rounded;
 
-  final String placeholderAsset = 'assets/album_image_placeholder.png';
+  final String placeholderAsset = 'assets/artist_image_placeholder.png';
 
   @override
   Widget build(BuildContext context) {
     Widget albumImage;
-    if (album.images.isNotEmpty) {
+    if (artist.images.isNotEmpty) {
       albumImage = FadeInImage.assetNetwork(
         placeholder: placeholderAsset,
-        image: album.images.first.url,
+        image: artist.images.first.url,
         fit: BoxFit.cover,
         fadeOutDuration: const Duration(milliseconds: 100),
         fadeInDuration: const Duration(milliseconds: 300),

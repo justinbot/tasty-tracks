@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
+import 'package:tasty_tracks/widgets/artist_image.dart';
+
 class ArtistSearchItem extends StatelessWidget {
   const ArtistSearchItem({
     Key key,
@@ -15,28 +17,14 @@ class ArtistSearchItem extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    Widget avatarImage;
-    if (artist.images.isNotEmpty) {
-      avatarImage = FadeInImage.assetNetwork(
-        image: artist.images.first.url,
-        placeholder: 'assets/album_cover_placeholder.png',
-        fit: BoxFit.cover,
-        fadeOutDuration: const Duration(milliseconds: 100),
-        fadeInDuration: const Duration(milliseconds: 300),
-        width: 40.0,
-        height: 40.0,
-      );
-    } else {
-      avatarImage = Image.asset(
-        'assets/album_cover_placeholder.png',
-        width: 40.0,
-        height: 40.0,
-      );
-    }
-
     return ListTile(
-      leading: ClipOval(
-        child: avatarImage,
+      leading: Hero(
+        tag: 'artistImageHero-${artist.id}',
+        child: ArtistImage(
+          artist: artist,
+          diameter: 40.0,
+          rounded: true,
+        ),
       ),
       title: Text(
         artist.name,
