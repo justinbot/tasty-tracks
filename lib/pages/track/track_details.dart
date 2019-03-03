@@ -1,10 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/spotify_api.dart';
+import 'package:tasty_tracks/widgets/details_page.dart';
+import 'package:tasty_tracks/widgets/album_image.dart';
+import 'package:tasty_tracks/utils/format_date.dart';
 
 class TrackDetailsPage extends StatefulWidget {
   const TrackDetailsPage({
@@ -35,44 +37,67 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-
-    if (_palette != null) {
-      // Try to get a color from the palette to use as an accent
-      Color trackColor = _palette.lightVibrantColor?.color ??
-          _palette.vibrantColor?.color ??
-          _palette.lightMutedColor?.color;
-      if (trackColor != null) {
-        theme = theme.copyWith(accentColor: trackColor);
-      }
-    }
-
-    return Theme(
-        data: theme,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: theme.canvasColor,
-            actions: <Widget>[
-              PopupMenuButton(
-                itemBuilder: (BuildContext context) {
-                  return [
-                    PopupMenuItem(
-                      child: Text('View album'),
+    return DetailsPage(
+      isBusy: _isBusy,
+      hasError: _hasError,
+      errorText: 'Error loading your track :(',
+      palette: _palette,
+      content: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).canvasColor,
+          actions: <Widget>[
+            PopupMenuButton(
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem(
+                    child: Text('View album'),
+                  ),
+                  PopupMenuItem(
+                    child: Text('View artist'),
+                  ),
+                ];
+              },
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: ListView(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _TrackHeader(
+                          track: _track,
+                          album: _album,
+                        ),
+                      ],
                     ),
-                    PopupMenuItem(
-                      child: Text('View artist'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Row(
+                      children: <Widget>[
+                        _TrackBody(
+                          track: _track,
+                        )
+                      ],
                     ),
-                  ];
-                },
+                  ),
+                ],
               ),
             ],
           ),
-          body: SafeArea(
-            child: _content(),
-          ),
-        ));
+        ),
+      ),
+    );
   }
 
+  // TODO Rewrite as Future for FutureBuilder?
   _loadData() async {
     setState(() => _isBusy = true);
 
@@ -103,65 +128,10 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
       });
     }
   }
-
-  Widget _content() {
-    if (_hasError) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Error loading your track :('),
-            FlatButton(
-              onPressed: () {
-                _loadData();
-              },
-              child: Text('Try again'),
-            ),
-          ],
-        ),
-      );
-    } else if (_isBusy) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    } else {
-      return ListView(
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(32.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    TrackHeader(
-                      track: _track,
-                      album: _album,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Row(
-                  children: <Widget>[
-                    TrackDetails(
-                      track: _track,
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      );
-    }
-  }
 }
 
-class TrackHeader extends StatelessWidget {
-  const TrackHeader({
+class _TrackHeader extends StatelessWidget {
+  const _TrackHeader({
     Key key,
     this.track,
     this.album,
@@ -175,42 +145,15 @@ class TrackHeader extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     String artistNames = track.artists.map((artist) => artist.name).join(', ');
 
-    // Format release date according to its precision
-    String releaseDateFormatted = '';
-    if (album.releaseDatePrecision == 'year') {
-      DateTime releaseDate = DateTime.parse(album.releaseDate + '-01-01');
-      releaseDateFormatted = DateFormat.y().format(releaseDate);
-    } else if (album.releaseDatePrecision == 'month') {
-      DateTime releaseDate = DateTime.parse(album.releaseDate + '-01');
-      releaseDateFormatted = DateFormat.yMMM().format(releaseDate);
-    } else if (album.releaseDatePrecision == 'day') {
-      DateTime releaseDate = DateTime.parse(album.releaseDate);
-      releaseDateFormatted = DateFormat.yMMMd().format(releaseDate);
-    }
-
-    Widget avatarImage;
-    if (album.images.isNotEmpty) {
-      avatarImage = FadeInImage.assetNetwork(
-        placeholder: 'assets/album_cover_placeholder.png',
-        image: album.images.first.url,
-        fit: BoxFit.cover,
-        width: 300.0,
-        height: 300.0,
-      );
-    } else {
-      avatarImage = Image.asset(
-        'assets/album_cover_placeholder.png',
-        width: 300.0,
-        height: 300.0,
-      );
-    }
-
     return Expanded(
         child: Column(
       children: <Widget>[
         Hero(
           tag: 'avatarImageHero-${track.id}',
-          child: avatarImage,
+          child: AlbumImage(
+            album: album,
+            diameter: 300.0,
+          ),
         ),
         SizedBox(height: 16.0),
         Text(
@@ -232,7 +175,7 @@ class TrackHeader extends StatelessWidget {
         ),
         SizedBox(height: 4.0),
         Text(
-          releaseDateFormatted,
+          formatDate(album.releaseDate, album.releaseDatePrecision),
           style: theme.textTheme.caption,
         ),
       ],
@@ -240,8 +183,8 @@ class TrackHeader extends StatelessWidget {
   }
 }
 
-class TrackDetails extends StatelessWidget {
-  const TrackDetails({
+class _TrackBody extends StatelessWidget {
+  const _TrackBody({
     Key key,
     this.track,
   }) : super(key: key);
