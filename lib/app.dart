@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'package:tasty_tracks/constants/theme.dart';
+import 'package:tasty_tracks/pages/album/album.dart';
+import 'package:tasty_tracks/pages/artist/artist.dart';
 import 'package:tasty_tracks/pages/auth/landing.dart';
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
 import 'package:tasty_tracks/pages/auth/sign_up.dart';
 import 'package:tasty_tracks/pages/home/home.dart';
 import 'package:tasty_tracks/pages/navigation.dart';
 import 'package:tasty_tracks/pages/track/track.dart';
-import 'package:tasty_tracks/pages/album/album.dart';
 
 class TastyTracksApp extends StatelessWidget {
   @override
@@ -35,11 +36,11 @@ Route<dynamic> _handleRoute(RouteSettings settings) {
   final List<String> uri = settings.name.split('/');
   final List<String> args = uri.last.split(':');
 
-  if (path.startsWith(TrackDetailsPage.routeName)) {
+  if (path.startsWith(TrackPage.routeName)) {
     String trackId = args[1];
     return MaterialPageRoute(
       settings: settings,
-      builder: (BuildContext context) => TrackDetailsPage(
+      builder: (BuildContext context) => TrackPage(
             trackId: trackId,
           ),
     );
@@ -49,6 +50,14 @@ Route<dynamic> _handleRoute(RouteSettings settings) {
       settings: settings,
       builder: (BuildContext context) => AlbumPage(
             albumId: albumId,
+          ),
+    );
+  } else if (path.startsWith(ArtistPage.routeName)) {
+    String artistId = args[1];
+    return MaterialPageRoute(
+      settings: settings,
+      builder: (BuildContext context) => ArtistPage(
+            artistId: artistId,
           ),
     );
   } else {

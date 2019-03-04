@@ -4,10 +4,11 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/models/search_history_model.dart';
+import 'package:tasty_tracks/pages/album/album.dart';
+import 'package:tasty_tracks/pages/artist/artist.dart';
 import 'package:tasty_tracks/pages/search/music_search_delegate.dart';
 import 'package:tasty_tracks/pages/search/widgets/search_history.dart';
 import 'package:tasty_tracks/pages/track/track.dart';
-import 'package:tasty_tracks/pages/album/album.dart';
 
 class SearchPage extends StatefulWidget {
   static final String routeName = '/search';
@@ -82,12 +83,12 @@ class _SearchPageState extends State<SearchPage> {
             .pushNamed(AlbumPage.routeName + ':${selectedItem.id}');
       } else if (selectedItem is spotify.ArtistSimple) {
         history.addArtist(selectedItem);
-        // TODO
-        print('TODO Artist details');
+        Navigator.of(context)
+            .pushNamed(ArtistPage.routeName + ':${selectedItem.id}');
       } else if (selectedItem is spotify.TrackSimple) {
         history.addTrack(selectedItem);
         Navigator.of(context)
-            .pushNamed(TrackDetailsPage.routeName + ':${selectedItem.id}');
+            .pushNamed(TrackPage.routeName + ':${selectedItem.id}');
       }
     }
   }

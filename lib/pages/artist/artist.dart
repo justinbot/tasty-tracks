@@ -2,28 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
-import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
+import 'package:tasty_tracks/pages/artist/widgets/artist_details.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 import 'package:tasty_tracks/widgets/error_message.dart';
 
-class TrackPage extends StatefulWidget {
-  const TrackPage({
+class ArtistPage extends StatefulWidget {
+  const ArtistPage({
     Key key,
-    this.trackId,
+    this.artistId,
   }) : super(key: key);
 
-  static final String routeName = '/track-details';
-  final String trackId;
+  static final String routeName = '/artist-details';
+  final String artistId;
 
   @override
-  _TrackPageState createState() => _TrackPageState();
+  _ArtistPageState createState() => _ArtistPageState();
 }
 
-class _TrackPageState extends State<TrackPage> {
-  bool _isBusy = false;
-  bool _hasError = false;
-  spotify.Track _track;
-  spotify.Album _album;
+class _ArtistPageState extends State<ArtistPage> {
+  bool _isBusy;
+  bool _hasError;
+  spotify.Artist _artist;
   PaletteGenerator _palette;
 
   @override
@@ -39,13 +38,13 @@ class _TrackPageState extends State<TrackPage> {
       return Scaffold(
         body: SafeArea(
           child: ErrorMessage(
-            errorText: 'Failed to load track :(',
+            errorText: 'Failed to load artist :(',
             onRetry: () => _loadData(),
           ),
         ),
       );
     } else if (_isBusy) {
-      // TODO Placeholder TrackDetails
+      // TODO Placeholder ArtistDetails
       return Scaffold(
         body: SafeArea(
           child: Center(
@@ -54,9 +53,8 @@ class _TrackPageState extends State<TrackPage> {
         ),
       );
     } else {
-      return TrackDetails(
-        track: _track,
-        album: _album,
+      return ArtistDetails(
+        artist: _artist,
         palette: _palette,
       );
     }
@@ -68,18 +66,16 @@ class _TrackPageState extends State<TrackPage> {
       _hasError = false;
     });
 
-    spotify.Track track;
-    spotify.Album album;
+    spotify.Artist artist;
     PaletteGenerator palette;
     try {
-      track = await spotifyApi.tracks.get(widget.trackId);
-      album = await spotifyApi.albums.get(track.album.id);
+      artist = await spotifyApi.artists.get(widget.artistId);
 
-      if (album.images.isNotEmpty) {
+      if (artist.images.isNotEmpty) {
         // TODO Causes stutter when loading with larger images
         // This is why we use the last (narrowest) image
-        ImageProvider albumCover = NetworkImage(album.images.last.url);
-        palette = await PaletteGenerator.fromImageProvider(albumCover);
+        ImageProvider artistImage = NetworkImage(artist.images.last.url);
+        palette = await PaletteGenerator.fromImageProvider(artistImage);
       }
     } catch (e) {
       // TODO Log to error reporting
@@ -90,8 +86,7 @@ class _TrackPageState extends State<TrackPage> {
 
     setState(() {
       _isBusy = false;
-      _track = track;
-      _album = album;
+      _artist = artist;
       _palette = palette;
     });
   }
