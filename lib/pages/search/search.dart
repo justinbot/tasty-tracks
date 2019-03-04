@@ -6,8 +6,8 @@ import 'package:spotify/spotify_io.dart' as spotify;
 import 'package:tasty_tracks/models/search_history_model.dart';
 import 'package:tasty_tracks/pages/search/music_search_delegate.dart';
 import 'package:tasty_tracks/pages/search/widgets/search_history.dart';
-import 'package:tasty_tracks/pages/track/track_details.dart';
-import 'package:tasty_tracks/pages/album/album_details.dart';
+import 'package:tasty_tracks/pages/track/track.dart';
+import 'package:tasty_tracks/pages/album/album.dart';
 
 class SearchPage extends StatefulWidget {
   static final String routeName = '/search';
@@ -79,7 +79,7 @@ class _SearchPageState extends State<SearchPage> {
       if (selectedItem is spotify.AlbumSimple) {
         history.addAlbum(selectedItem);
         Navigator.of(context)
-            .pushNamed(AlbumDetailsPage.routeName + ':${selectedItem.id}');
+            .pushNamed(AlbumPage.routeName + ':${selectedItem.id}');
       } else if (selectedItem is spotify.ArtistSimple) {
         history.addArtist(selectedItem);
         // TODO

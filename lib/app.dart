@@ -6,8 +6,8 @@ import 'package:tasty_tracks/pages/auth/sign_in.dart';
 import 'package:tasty_tracks/pages/auth/sign_up.dart';
 import 'package:tasty_tracks/pages/home/home.dart';
 import 'package:tasty_tracks/pages/navigation.dart';
-import 'package:tasty_tracks/pages/track/track_details.dart';
-import 'package:tasty_tracks/pages/album/album_details.dart';
+import 'package:tasty_tracks/pages/track/track.dart';
+import 'package:tasty_tracks/pages/album/album.dart';
 
 class TastyTracksApp extends StatelessWidget {
   @override
@@ -43,11 +43,11 @@ Route<dynamic> _handleRoute(RouteSettings settings) {
             trackId: trackId,
           ),
     );
-  } else if (path.startsWith(AlbumDetailsPage.routeName)) {
+  } else if (path.startsWith(AlbumPage.routeName)) {
     String albumId = args[1];
     return MaterialPageRoute(
       settings: settings,
-      builder: (BuildContext context) => AlbumDetailsPage(
+      builder: (BuildContext context) => AlbumPage(
             albumId: albumId,
           ),
     );

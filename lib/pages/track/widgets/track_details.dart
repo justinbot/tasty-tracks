@@ -2,112 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
-import 'package:tasty_tracks/pages/album/album_details.dart';
-import 'package:tasty_tracks/spotify_api.dart';
+import 'package:tasty_tracks/pages/album/album.dart';
 import 'package:tasty_tracks/utils/format_date.dart';
 import 'package:tasty_tracks/widgets/album_image.dart';
 import 'package:tasty_tracks/widgets/palette_accent.dart';
 
 enum MenuActions { viewAlbum, viewArtist, openSpotify }
 
-class TrackDetailsPage extends StatefulWidget {
-  const TrackDetailsPage({
-    Key key,
-    this.trackId,
-  }) : super(key: key);
-
-  static final String routeName = '/track-details';
-  final String trackId;
-
-  @override
-  _TrackDetailsPageState createState() => _TrackDetailsPageState();
-}
-
-class _TrackDetailsPageState extends State<TrackDetailsPage> {
-  bool _isBusy = false;
-  bool _hasError = false;
-  spotify.Track _track;
-  spotify.Album _album;
-  PaletteGenerator _palette;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _loadData();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_hasError) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Error loading your track :('),
-            // TODO Try again button
-          ],
-        ),
-      );
-    } else if (_isBusy) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    } else {
-      return PaletteAccent(
-        palette: _palette,
-        child: _TrackDetails(
-          track: _track,
-          album: _album,
-        ),
-      );
-    }
-  }
-
-  void _loadData() async {
-    setState(() {
-      _isBusy = true;
-      _hasError = false;
-    });
-
-    spotify.Track track;
-    spotify.Album album;
-    PaletteGenerator palette;
-    try {
-      track = await spotifyApi.tracks.get(widget.trackId);
-      album = await spotifyApi.albums.get(track.album.id);
-
-      if (album.images.isNotEmpty) {
-        // TODO Causes stutter when loading with larger images
-        // This is why we use the last (narrowest) image
-        ImageProvider albumCover = NetworkImage(album.images.last.url);
-        palette = await PaletteGenerator.fromImageProvider(albumCover);
-      }
-    } catch (e) {
-      // TODO Log to error reporting
-      setState(() {
-        _hasError = true;
-      });
-    }
-
-    setState(() {
-      _isBusy = false;
-      _track = track;
-      _album = album;
-      _palette = palette;
-    });
-  }
-}
-
-class _TrackDetails extends StatelessWidget {
-  const _TrackDetails({
+class TrackDetails extends StatelessWidget {
+  const TrackDetails({
     Key key,
     this.track,
     this.album,
+    this.palette,
   }) : super(key: key);
 
   final spotify.Track track;
   final spotify.Album album;
+  final PaletteGenerator palette;
 
   @override
   Widget build(BuildContext context) {
@@ -121,8 +33,7 @@ class _TrackDetails extends StatelessWidget {
           onSelected: (MenuActions result) {
             switch (result) {
               case MenuActions.viewAlbum:
-                navigator.pushNamed(
-                    AlbumDetailsPage.routeName + ':${track.album.id}');
+                navigator.pushNamed(AlbumPage.routeName + ':${track.album.id}');
                 break;
               case MenuActions.viewArtist:
                 // TODO
@@ -222,34 +133,37 @@ class _TrackDetails extends StatelessWidget {
       ),
     );
 
-    return Scaffold(
-      appBar: appBar,
-      body: SafeArea(
-        child: ListView(
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      header,
-                    ],
+    return PaletteAccent(
+      palette: palette,
+      child: Scaffold(
+        appBar: appBar,
+        body: SafeArea(
+          child: ListView(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        header,
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Row(
-                    children: <Widget>[
-                      body,
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Row(
+                      children: <Widget>[
+                        body,
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
