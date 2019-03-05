@@ -4,8 +4,8 @@ import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/pages/track/track.dart';
 import 'package:tasty_tracks/utils/format_date.dart';
-import 'package:tasty_tracks/widgets/album_image.dart';
-import 'package:tasty_tracks/widgets/palette_accent.dart';
+import 'package:tasty_tracks/utils/theme_with_palette.dart';
+import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
 
 enum MenuActions { viewArtist, openSpotify }
 
@@ -24,6 +24,7 @@ class AlbumDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    theme = themeWithPalette(theme, palette);
 
     Widget appBar = AppBar(
       backgroundColor: theme.canvasColor,
@@ -106,37 +107,34 @@ class AlbumDetails extends StatelessWidget {
       ),
     );
 
-    return PaletteAccent(
-      palette: palette,
-      child: Scaffold(
-        appBar: appBar,
-        body: SafeArea(
-          child: ListView(
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        header,
-                      ],
-                    ),
+    return Scaffold(
+      appBar: appBar,
+      body: SafeArea(
+        child: ListView(
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      header,
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Row(
-                      children: <Widget>[
-                        body,
-                      ],
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Row(
+                    children: <Widget>[
+                      body,
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

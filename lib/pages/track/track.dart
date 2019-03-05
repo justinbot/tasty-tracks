@@ -3,6 +3,7 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
+import 'package:tasty_tracks/pages/track/widgets/track_details_placeholder.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 import 'package:tasty_tracks/widgets/error_message.dart';
 
@@ -46,12 +47,8 @@ class _TrackPageState extends State<TrackPage> {
       );
     } else if (_isBusy) {
       // TODO Placeholder TrackDetails
-      return Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
+      return TrackDetailsPlaceholder(
+        trackId: widget.trackId,
       );
     } else {
       return TrackDetails(

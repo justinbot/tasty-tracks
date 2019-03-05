@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
-import 'package:tasty_tracks/widgets/album_image.dart';
+import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
 
 class TrackSearchItem extends StatelessWidget {
   const TrackSearchItem({

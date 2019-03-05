@@ -1,11 +1,12 @@
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/pages/album/album.dart';
+import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
 import 'package:tasty_tracks/utils/format_date.dart';
-import 'package:tasty_tracks/widgets/album_image.dart';
-import 'package:tasty_tracks/widgets/palette_accent.dart';
+import 'package:tasty_tracks/utils/theme_with_palette.dart';
 
 enum MenuActions { viewAlbum, viewArtist, openSpotify }
 
@@ -24,6 +25,8 @@ class TrackDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    theme = themeWithPalette(theme, palette);
+
     NavigatorState navigator = Navigator.of(context);
 
     Widget appBar = AppBar(
@@ -63,16 +66,25 @@ class TrackDetails extends StatelessWidget {
 
     String artistNames = track.artists.map((artist) => artist.name).join(', ');
 
-    Widget header = Expanded(
+    Widget albumImage = Hero(
+      tag: 'trackImageHero-${track.id}',
+      child: AlbumImage(
+        album: album,
+      ),
+    );
+
+    Widget header = Container(
+      padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 32.0),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [theme.accentColor.withOpacity(0.2), theme.canvasColor],
+        ),
+      ),
       child: Column(
         children: <Widget>[
-          Hero(
-            tag: 'trackImageHero-${track.id}',
-            child: AlbumImage(
-              album: album,
-              diameter: 300.0,
-            ),
-          ),
+          albumImage,
           const SizedBox(height: 16.0),
           Text(
             track.name,
@@ -100,70 +112,55 @@ class TrackDetails extends StatelessWidget {
       ),
     );
 
-    Widget body = Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    Widget body = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+      child: Row(
         children: <Widget>[
-          RaisedButton(
-            child: Text(
-              'Place Bet',
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text(
+                    'Place Bet',
+                  ),
+                  color: theme.accentColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(64.0),
+                  ),
+                  onPressed: () {
+                    // TODO Place bet
+                  },
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      '${track.popularity}',
+                      style: theme.textTheme.display2,
+                    ),
+                    const SizedBox(width: 4.0),
+                    Text('/100 popularity'),
+                  ],
+                ),
+                const SizedBox(height: 8.0),
+                Text('${track.duration.toString()}'),
+                // TODO Add additional details from track analysis
+              ],
             ),
-            color: theme.accentColor,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(64.0)),
-            onPressed: () {
-              // TODO Place bet
-            },
           ),
-          const SizedBox(height: 16.0),
-          Row(
-            children: <Widget>[
-              Text(
-                '${track.popularity}',
-                style: theme.textTheme.display2,
-              ),
-              const SizedBox(width: 4.0),
-              Text('/100 popularity'),
-            ],
-          ),
-          const SizedBox(height: 8.0),
-          Text('${track.duration.toString()}'),
-          // TODO Add additional details from track analysis
         ],
       ),
     );
 
-    return PaletteAccent(
-      palette: palette,
-      child: Scaffold(
-        appBar: appBar,
-        body: SafeArea(
-          child: ListView(
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(32.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        header,
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Row(
-                      children: <Widget>[
-                        body,
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+    return Scaffold(
+      appBar: appBar,
+      body: SafeArea(
+        child: ListView(
+          children: <Widget>[
+            header,
+            body,
+          ],
         ),
       ),
     );
