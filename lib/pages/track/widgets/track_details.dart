@@ -67,7 +67,7 @@ class TrackDetails extends StatelessWidget {
     Widget albumImage = Hero(
       tag: 'trackImageHero-${track.id}',
       child: Material(
-        elevation: 5,
+        elevation: 8,
         child: AlbumImage(
           album: album,
         ),
@@ -75,13 +75,13 @@ class TrackDetails extends StatelessWidget {
     );
 
     Widget header = Container(
-      padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 32.0),
+      padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 16.0),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            theme.accentColor.withOpacity(0.2),
+            theme.accentColor.withOpacity(0.4),
             theme.accentColor.withOpacity(0.0)
           ],
         ),
@@ -116,50 +116,93 @@ class TrackDetails extends StatelessWidget {
       ),
     );
 
-//    Iterable<Widget> artistList = track.artists.map((artist) {
-//      return
-//    });
-
     Widget previewPlayer = TrackPreviewPlayer(previewUrl: track.previewUrl);
+
+    Widget popularity = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          '${track.popularity}',
+          style: theme.textTheme.display2.copyWith(color: theme.accentColor),
+        ),
+        const SizedBox(width: 4.0),
+        Text(
+          '/100 popularity',
+          style: theme.textTheme.subhead,
+        ),
+      ],
+    );
+
+    Widget buttons = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        RaisedButton(
+          child: Text(
+            'Place Bet',
+          ),
+          color: theme.accentColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(64.0),
+          ),
+          onPressed: () {
+            // TODO Place bet
+          },
+        ),
+        OutlineButton(
+          child: Text(
+            'Follow',
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(64.0),
+          ),
+          onPressed: () {
+            // TODO Place bet
+          },
+        ),
+      ],
+    );
+
+    Iterable<Widget> artistList = track.artists.map((artist) {
+      return Text(artist.name);
+    });
+
+    Widget artists = Column(
+      children: artistList.toList(),
+    );
 
     Widget body = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                RaisedButton(
-                  child: Text(
-                    'Place Bet',
-                  ),
-                  color: theme.accentColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(64.0),
-                  ),
-                  onPressed: () {
-                    // TODO Place bet
-                  },
-                ),
-                const SizedBox(height: 16.0),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      '${track.popularity}',
-                      style: theme.textTheme.display2,
-                    ),
-                    const SizedBox(width: 4.0),
-                    Text('/100 popularity'),
-                  ],
-                ),
-                const SizedBox(height: 8.0),
-                Text('${track.duration.toString()}'),
-                previewPlayer,
-                // TODO Add additional details from track analysis
-              ],
-            ),
+          popularity,
+          const SizedBox(height: 4.0),
+          buttons,
+          const SizedBox(height: 16.0),
+          previewPlayer,
+          const SizedBox(height: 16.0),
+          Row(
+            children: <Widget>[
+              Icon(FeatherIcons.music),
+              Text(
+                'Track',
+                style: theme.textTheme.title,
+              ),
+            ],
           ),
+          Text('${track.duration.toString()}'),
+          const SizedBox(height: 16.0),
+          Row(
+            children: <Widget>[
+              Icon(FeatherIcons.user),
+              Text(
+                'Artists',
+                style: theme.textTheme.title,
+              ),
+            ],
+          ),
+          artists,
+          // TODO Add additional details from track analysis
         ],
       ),
     );
@@ -168,6 +211,9 @@ class TrackDetails extends StatelessWidget {
       appBar: appBar,
       body: SafeArea(
         child: ListView(
+          padding: EdgeInsets.only(
+            bottom: 64.0,
+          ),
           children: <Widget>[
             header,
             body,

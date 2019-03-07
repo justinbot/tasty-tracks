@@ -18,7 +18,6 @@ class TrackPreviewPlayer extends StatefulWidget {
 }
 
 class _TrackPreviewPlayerState extends State<TrackPreviewPlayer> {
-  bool _started = false;
   AudioPlayer _player;
   AudioPlayerState _playerState;
   Duration _playerPosition = Duration(seconds: 0);
@@ -29,12 +28,6 @@ class _TrackPreviewPlayerState extends State<TrackPreviewPlayer> {
   @override
   void initState() {
     super.initState();
-
-    _player = AudioPlayer();
-    _onPlayerStateChangedSubscription =
-        _player.onPlayerStateChanged.listen(onPlayerStateChanged);
-    _onAudioPositionChangedSubscription =
-        _player.onAudioPositionChanged.listen(onPlayerAudioPositionChanged);
   }
 
   @override
@@ -56,18 +49,27 @@ class _TrackPreviewPlayerState extends State<TrackPreviewPlayer> {
       );
     }
 
+    bool active = _playerState == AudioPlayerState.PLAYING ||
+        _playerState == AudioPlayerState.PAUSED;
+
     return Row(
       children: <Widget>[
         playerButton,
-        Slider(
-          value: _playerPosition.inMilliseconds.toDouble(),
-          min: 0.0,
-          max: _trackDuration.inMilliseconds.toDouble(),
-          onChangeStart: onSliderPositionChangeStart,
-          onChanged: _started ? onSliderPositionChanged : null,
-          onChangeEnd: onSliderPositionChangeEnd,
-          activeColor: theme.accentColor,
-          inactiveColor: theme.accentColor.withOpacity(0.4),
+        Expanded(
+          child: Slider(
+            value: _playerPosition.inMilliseconds.toDouble(),
+            min: 0.0,
+            max: _trackDuration.inMilliseconds.toDouble(),
+            onChangeStart: onSliderPositionChangeStart,
+            onChanged: active ? onSliderPositionChanged : null,
+            onChangeEnd: onSliderPositionChangeEnd,
+            activeColor: theme.accentColor,
+            inactiveColor: theme.accentColor.withOpacity(0.4),
+          ),
+        ),
+        Text(
+          widget.previewUrl != null ? 'Preview' : 'No preview available',
+          style: theme.textTheme.caption,
         ),
       ],
     );
@@ -75,7 +77,7 @@ class _TrackPreviewPlayerState extends State<TrackPreviewPlayer> {
 
   @override
   void dispose() {
-    _player.stop();
+    _player?.stop();
     _onAudioPositionChangedSubscription?.cancel();
     _onPlayerStateChangedSubscription?.cancel();
 
@@ -83,6 +85,11 @@ class _TrackPreviewPlayerState extends State<TrackPreviewPlayer> {
   }
 
   void onPlayerStateChanged(AudioPlayerState s) {
+    if (s == AudioPlayerState.PLAYING) {
+      setState(() {
+        _trackDuration = _player.duration;
+      });
+    }
     setState(() => _playerState = s);
   }
 
@@ -91,10 +98,13 @@ class _TrackPreviewPlayerState extends State<TrackPreviewPlayer> {
   }
 
   void onPlay() {
+    _player = AudioPlayer();
+    _onPlayerStateChangedSubscription =
+        _player.onPlayerStateChanged.listen(onPlayerStateChanged);
+    _onAudioPositionChangedSubscription =
+        _player.onAudioPositionChanged.listen(onPlayerAudioPositionChanged);
+
     _player.play(widget.previewUrl);
-    setState(() {
-      _started = true;
-    });
   }
 
   void onPause() {

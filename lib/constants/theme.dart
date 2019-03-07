@@ -12,8 +12,8 @@ ThemeData _buildTastyTracksTheme() {
     accentColorBrightness: Brightness.dark,
     primaryColor: primaryColor,
     buttonColor: primaryColor,
-    indicatorColor: Colors.white,
-    cardColor: Colors.blueGrey[800],
+    dividerColor: Colors.white.withOpacity(0.6),
+    cardColor: Colors.blueGrey[900],
     accentColor: secondaryColor,
     canvasColor: Colors.black,
     scaffoldBackgroundColor: Colors.black,
@@ -22,10 +22,16 @@ ThemeData _buildTastyTracksTheme() {
       colorScheme: colorScheme,
       textTheme: ButtonTextTheme.primary,
     ),
-//    dividerColor: Colors.white,
   );
 
-  return base;
+  return base.copyWith(
+    // Disabled slider is invisible on black background
+    sliderTheme: base.sliderTheme.copyWith(
+      disabledThumbColor: Colors.white.withOpacity(0.6),
+      disabledActiveTrackColor: Colors.white.withOpacity(0.6),
+      disabledInactiveTrackColor: Colors.white.withOpacity(0.3),
+    ),
+  );
 }
 
 final ThemeData tastyTracksTheme = _buildTastyTracksTheme();
