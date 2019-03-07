@@ -5,8 +5,8 @@ import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/pages/album/album.dart';
 import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
+import 'package:tasty_tracks/pages/track/widgets/track_preview_player.dart';
 import 'package:tasty_tracks/utils/format_date.dart';
-import 'package:tasty_tracks/utils/theme_with_palette.dart';
 
 enum MenuActions { viewAlbum, viewArtist, openSpotify }
 
@@ -25,8 +25,6 @@ class TrackDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    theme = themeWithPalette(theme, palette);
-
     NavigatorState navigator = Navigator.of(context);
 
     Widget appBar = AppBar(
@@ -68,8 +66,11 @@ class TrackDetails extends StatelessWidget {
 
     Widget albumImage = Hero(
       tag: 'trackImageHero-${track.id}',
-      child: AlbumImage(
-        album: album,
+      child: Material(
+        elevation: 5,
+        child: AlbumImage(
+          album: album,
+        ),
       ),
     );
 
@@ -79,7 +80,10 @@ class TrackDetails extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [theme.accentColor.withOpacity(0.2), theme.canvasColor],
+          colors: [
+            theme.accentColor.withOpacity(0.2),
+            theme.accentColor.withOpacity(0.0)
+          ],
         ),
       ),
       child: Column(
@@ -111,6 +115,12 @@ class TrackDetails extends StatelessWidget {
         ],
       ),
     );
+
+//    Iterable<Widget> artistList = track.artists.map((artist) {
+//      return
+//    });
+
+    Widget previewPlayer = TrackPreviewPlayer(previewUrl: track.previewUrl);
 
     Widget body = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -145,6 +155,7 @@ class TrackDetails extends StatelessWidget {
                 ),
                 const SizedBox(height: 8.0),
                 Text('${track.duration.toString()}'),
+                previewPlayer,
                 // TODO Add additional details from track analysis
               ],
             ),

@@ -6,6 +6,7 @@ import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_details_placeholder.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 import 'package:tasty_tracks/widgets/error_message.dart';
+import 'package:tasty_tracks/utils/theme_with_palette.dart';
 
 class TrackPage extends StatefulWidget {
   const TrackPage({
@@ -51,10 +52,13 @@ class _TrackPageState extends State<TrackPage> {
         trackId: widget.trackId,
       );
     } else {
-      return TrackDetails(
-        track: _track,
-        album: _album,
-        palette: _palette,
+      return Theme(
+        data: themeWithPalette(Theme.of(context), _palette),
+        child: TrackDetails(
+          track: _track,
+          album: _album,
+          palette: _palette,
+        ),
       );
     }
   }
