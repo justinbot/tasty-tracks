@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:tasty_tracks/constants/theme.dart';
@@ -38,10 +39,17 @@ Route<dynamic> _handleRoute(RouteSettings settings) {
 
   if (path.startsWith(TrackPage.routeName)) {
     String trackId = args[1];
+    String decodedTrackImageUrl;
+    if (args.length > 2) {
+      // Decode the encoded URL
+      String encodedTrackImageUrl = args[2];
+      decodedTrackImageUrl = utf8.fuse(base64Url).decode(encodedTrackImageUrl);
+    }
     return MaterialPageRoute(
       settings: settings,
       builder: (BuildContext context) => TrackPage(
             trackId: trackId,
+            trackImageUrl: decodedTrackImageUrl,
           ),
     );
   } else if (path.startsWith(AlbumPage.routeName)) {

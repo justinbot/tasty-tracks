@@ -75,7 +75,7 @@ class TrackDetails extends StatelessWidget {
     );
 
     Widget header = Container(
-      padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
@@ -88,7 +88,10 @@ class TrackDetails extends StatelessWidget {
       ),
       child: Column(
         children: <Widget>[
-          albumImage,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32.0),
+            child: albumImage,
+          ),
           const SizedBox(height: 16.0),
           Text(
             track.name,
@@ -176,9 +179,9 @@ class TrackDetails extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           popularity,
-          const SizedBox(height: 4.0),
+          const SizedBox(height: 8.0),
           buttons,
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 8.0),
           previewPlayer,
           const SizedBox(height: 16.0),
           Row(

@@ -4,9 +4,11 @@ class TrackDetailsPlaceholder extends StatelessWidget {
   const TrackDetailsPlaceholder({
     Key key,
     this.trackId,
+    this.trackImageUrl,
   }) : super(key: key);
 
   final String trackId;
+  final String trackImageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -16,19 +18,28 @@ class TrackDetailsPlaceholder extends StatelessWidget {
       backgroundColor: theme.canvasColor,
     );
 
-    Widget albumImage = Hero(
-      tag: 'trackImageHero-${trackId}',
-      child: Image.asset(
+    Widget trackImage;
+
+    if (trackImageUrl != null) {
+      trackImage = Image.network(
+        trackImageUrl,
+        fit: BoxFit.cover,
+      );
+    } else {
+      trackImage = Image.asset(
         'assets/album_image_placeholder.png',
         fit: BoxFit.cover,
-      ),
-    );
+      );
+    }
 
     Widget header = Container(
-      padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 32.0),
+      padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 16.0),
       child: Column(
         children: <Widget>[
-          albumImage,
+          Hero(
+            tag: 'trackImageHero-${trackId}',
+            child: trackImage,
+          ),
         ],
       ),
     );

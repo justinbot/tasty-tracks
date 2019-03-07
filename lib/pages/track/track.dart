@@ -13,10 +13,12 @@ class TrackPage extends StatefulWidget {
   const TrackPage({
     Key key,
     this.trackId,
+    this.trackImageUrl,
   }) : super(key: key);
 
   static final String routeName = '/track-details';
   final String trackId;
+  final String trackImageUrl;
 
   @override
   _TrackPageState createState() => _TrackPageState();
@@ -48,9 +50,9 @@ class _TrackPageState extends State<TrackPage> {
         ),
       );
     } else if (_isBusy) {
-      // TODO Placeholder TrackDetails
       return TrackDetailsPlaceholder(
         trackId: widget.trackId,
+        trackImageUrl: widget.trackImageUrl,
       );
     } else {
       return Theme(
