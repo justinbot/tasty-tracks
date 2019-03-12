@@ -9,7 +9,6 @@ import 'package:tasty_tracks/widgets/error_message.dart';
 import 'package:tasty_tracks/utils/theme_with_palette.dart';
 
 class TrackPage extends StatefulWidget {
-  // TODO Optionally pass image url for hero transition
   const TrackPage({
     Key key,
     this.trackId,

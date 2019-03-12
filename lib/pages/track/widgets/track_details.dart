@@ -2,9 +2,11 @@ import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:tasty_tracks/pages/album/album.dart';
 import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
+import 'package:tasty_tracks/pages/artist/artist.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_preview_player.dart';
 import 'package:tasty_tracks/utils/format_date.dart';
 
@@ -25,7 +27,6 @@ class TrackDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    NavigatorState navigator = Navigator.of(context);
 
     Widget appBar = AppBar(
       backgroundColor: theme.canvasColor,
@@ -34,13 +35,13 @@ class TrackDetails extends StatelessWidget {
           onSelected: (MenuActions result) {
             switch (result) {
               case MenuActions.viewAlbum:
-                navigator.pushNamed(AlbumPage.routeName + ':${track.album.id}');
+                _viewAlbum(context);
                 break;
               case MenuActions.viewArtist:
-                // TODO
+                _viewArtist(context);
                 break;
               case MenuActions.openSpotify:
-                // TODO
+                _openSpotify(context);
                 break;
             }
           },
@@ -148,18 +149,18 @@ class TrackDetails extends StatelessWidget {
             borderRadius: BorderRadius.circular(64.0),
           ),
           onPressed: () {
-            // TODO Place bet
+            // TODO Place bet on Track
           },
         ),
         OutlineButton(
           child: Text(
-            'Follow',
+            'Watch',
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(64.0),
           ),
           onPressed: () {
-            // TODO Place bet
+            // TODO Place watch on Track
           },
         ),
       ],
@@ -224,5 +225,25 @@ class TrackDetails extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _viewAlbum(BuildContext context) {
+    Navigator.of(context).pushNamed(AlbumPage.routeName + ':${track.album.id}');
+  }
+
+  void _viewArtist(BuildContext context) {
+    Navigator.of(context)
+        .pushNamed(ArtistPage.routeName + ':${track.artists.first.id}');
+  }
+
+  void _openSpotify(BuildContext context) async {
+    String url = track.uri;
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      String errorMessage = "Couldn't open with Spotify";
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+    }
   }
 }
