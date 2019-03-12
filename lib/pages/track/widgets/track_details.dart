@@ -1,3 +1,4 @@
+import 'package:duration/duration.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -13,7 +14,7 @@ import 'package:tasty_tracks/utils/format_date.dart';
 enum MenuActions { viewAlbum, viewArtist, openSpotify }
 
 class TrackDetails extends StatelessWidget {
-  const TrackDetails({
+  TrackDetails({
     Key key,
     this.track,
     this.album,
@@ -23,6 +24,8 @@ class TrackDetails extends StatelessWidget {
   final spotify.Track track;
   final spotify.Album album;
   final PaletteGenerator palette;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +99,8 @@ class TrackDetails extends StatelessWidget {
           const SizedBox(height: 16.0),
           Text(
             track.name,
-            style: theme.textTheme.headline,
+            style:
+                theme.textTheme.headline.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4.0),
@@ -114,6 +118,10 @@ class TrackDetails extends StatelessWidget {
           const SizedBox(height: 4.0),
           Text(
             formatDate(album.releaseDate, album.releaseDatePrecision),
+            style: theme.textTheme.caption,
+          ),
+          Text(
+            printDuration(track.duration),
             style: theme.textTheme.caption,
           ),
         ],
@@ -166,12 +174,25 @@ class TrackDetails extends StatelessWidget {
       ],
     );
 
-    Iterable<Widget> artistList = track.artists.map((artist) {
-      return Text(artist.name);
-    });
+    Widget copyrights = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: album.copyrights.map((c) {
+        return Text(
+          c.text,
+          style: theme.textTheme.caption,
+        );
+      }).toList(),
+    );
 
-    Widget artists = Column(
-      children: artistList.toList(),
+    Widget credits = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Available in ${album.availableMarkets.length} markets.'),
+        const SizedBox(height: 8.0),
+        Text('${album.label}'),
+        const SizedBox(height: 4.0),
+        copyrights,
+      ],
     );
 
     Widget body = Padding(
@@ -185,33 +206,13 @@ class TrackDetails extends StatelessWidget {
           const SizedBox(height: 8.0),
           previewPlayer,
           const SizedBox(height: 16.0),
-          Row(
-            children: <Widget>[
-              Icon(FeatherIcons.music),
-              Text(
-                'Track',
-                style: theme.textTheme.title,
-              ),
-            ],
-          ),
-          Text('${track.duration.toString()}'),
-          const SizedBox(height: 16.0),
-          Row(
-            children: <Widget>[
-              Icon(FeatherIcons.user),
-              Text(
-                'Artists',
-                style: theme.textTheme.title,
-              ),
-            ],
-          ),
-          artists,
-          // TODO Add additional details from track analysis
+          credits,
         ],
       ),
     );
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: appBar,
       body: SafeArea(
         child: ListView(
@@ -243,7 +244,8 @@ class TrackDetails extends StatelessWidget {
       await launch(url);
     } else {
       String errorMessage = "Couldn't open with Spotify";
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+      _scaffoldKey.currentState
+          .showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }
 }
