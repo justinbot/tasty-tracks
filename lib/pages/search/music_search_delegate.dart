@@ -76,26 +76,25 @@ class MusicSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO Implement searching as user types, with debouncing
-    // return buildResults(context);
-    // TODO Show history if empty query
-    return Center(child: Text('Suggestions for ${query} go here'));
+    // TODO Implement debouncing
+    return buildResults(context);
   }
 
   _handleSearchRequest() {
     // Only make a new request when necessary
     if (searchRequest == null || query != lastQuery) {
       searchRequest = Future<Map<spotify.SearchType, List<Object>>>(() {
+        String formattedQuery = query + '*';
         return spotifyApi.search
             .get(
-              query,
+              formattedQuery,
               [
                 spotify.SearchType.track,
                 spotify.SearchType.artist,
                 spotify.SearchType.album,
               ],
             )
-            .first(10)
+            .first(5)
             .then((pages) {
               // Separate paged items into lists of each type of result
               List<spotify.TrackSimple> trackResults = List();

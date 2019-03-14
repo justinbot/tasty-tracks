@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/models/search_history_model.dart';
+import 'package:tasty_tracks/pages/album/album.dart';
+import 'package:tasty_tracks/pages/artist/artist.dart';
 import 'package:tasty_tracks/pages/search/music_search_delegate.dart';
 import 'package:tasty_tracks/pages/search/widgets/search_history.dart';
-import 'package:tasty_tracks/pages/track/track_details.dart';
+import 'package:tasty_tracks/pages/track/track.dart';
 
 class SearchPage extends StatefulWidget {
   static final String routeName = '/search';
@@ -77,16 +80,26 @@ class _SearchPageState extends State<SearchPage> {
       // Navigate to details page for selected item
       if (selectedItem is spotify.AlbumSimple) {
         history.addAlbum(selectedItem);
-        // TODO
-        print('TODO Album details');
+        Navigator.of(context)
+            .pushNamed(AlbumPage.routeName + ':${selectedItem.id}');
       } else if (selectedItem is spotify.ArtistSimple) {
         history.addArtist(selectedItem);
-        // TODO
-        print('TODO Artist details');
-      } else if (selectedItem is spotify.TrackSimple) {
-        history.addTrack(selectedItem);
         Navigator.of(context)
-            .pushNamed(TrackDetailsPage.routeName + ':${selectedItem.id}');
+            .pushNamed(ArtistPage.routeName + ':${selectedItem.id}');
+      } else if (selectedItem is spotify.Track) {
+        history.addTrack(selectedItem);
+        if (selectedItem.album.images.isNotEmpty) {
+          String trackImageUrl = selectedItem.album.images.first.url;
+          // Encode the URL
+          String encodedTrackImageUrl = utf8.fuse(base64Url).encode(trackImageUrl);
+
+          Navigator.of(context).pushNamed(TrackPage.routeName +
+              ':${selectedItem.id}' +
+              ':${encodedTrackImageUrl}');
+        } else {
+          Navigator.of(context)
+              .pushNamed(TrackPage.routeName + ':${selectedItem.id}');
+        }
       }
     }
   }
