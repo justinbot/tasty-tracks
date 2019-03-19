@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:duration/duration.dart';
-import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:tasty_tracks/models/track_watch_model.dart';
 import 'package:tasty_tracks/pages/album/album.dart';
 import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
 import 'package:tasty_tracks/pages/artist/artist.dart';
@@ -160,15 +162,32 @@ class TrackDetails extends StatelessWidget {
             // TODO Place bet on Track
           },
         ),
-        OutlineButton(
-          child: Text(
-            'Watch',
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(64.0),
-          ),
-          onPressed: () {
-            // TODO Place watch on Track
+        ScopedModelDescendant<TrackWatchModel>(
+          rebuildOnChange: false,
+          builder: (context, child, trackWatchModel) {
+            return StreamBuilder(
+              stream: trackWatchModel.snapshots(trackId: track.id),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData && snapshot.data.documents.isNotEmpty) {
+                  return OutlineButton(
+                    child: Text('Remove watch'),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(64.0),
+                    ),
+                    onPressed: () => trackWatchModel.remove(track.id),
+                  );
+                } else {
+                  return OutlineButton(
+                    child: Text('Watch'),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(64.0),
+                    ),
+                    onPressed: () => trackWatchModel.add(track.id),
+                  );
+                }
+              },
+            );
           },
         ),
       ],
@@ -228,16 +247,16 @@ class TrackDetails extends StatelessWidget {
     );
   }
 
-  void _viewAlbum(BuildContext context) {
+  _viewAlbum(BuildContext context) {
     Navigator.of(context).pushNamed(AlbumPage.routeName + ':${track.album.id}');
   }
 
-  void _viewArtist(BuildContext context) {
+  _viewArtist(BuildContext context) {
     Navigator.of(context)
         .pushNamed(ArtistPage.routeName + ':${track.artists.first.id}');
   }
 
-  void _openSpotify(BuildContext context) async {
+  _openSpotify(BuildContext context) async {
     String url = track.uri;
 
     if (await canLaunch(url)) {
