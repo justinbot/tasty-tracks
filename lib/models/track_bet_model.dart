@@ -6,14 +6,14 @@ import 'package:scoped_model/scoped_model.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final Firestore _firestore = Firestore.instance;
 
-class TrackWatchModel extends Model {
-  TrackWatchModel({
+class TrackBetModel extends Model {
+  TrackBetModel({
     this.user,
   });
 
   final FirebaseUser user;
 
-  static const String collectionPath = 'track_watches';
+  static const String collectionPath = 'track_bets';
 
   CollectionReference collection() {
     return _firestore.collection(collectionPath);
@@ -53,15 +53,16 @@ class TrackWatchModel extends Model {
   }
 
   Future<DocumentReference> add(String trackId) async {
+    // TODO This should be a call to a cloud function rather than direct write.
     FirebaseUser user = await _auth.currentUser();
     // TODO Run query and write in same transaction
     QuerySnapshot query = await collection()
         .where('user_id', isEqualTo: user.uid)
         .where('track_id', isEqualTo: trackId)
         .getDocuments();
-    // Don't allow multiple watches for one track
+    // Don't allow multiple bets for one track
     if (query.documents.isEmpty) {
-      // Return reference to the newly added watch
+      // Return reference to the newly added bet
       DocumentReference reference = await collection().add({
         'created_timestamp': FieldValue.serverTimestamp(),
         'track_id': trackId,

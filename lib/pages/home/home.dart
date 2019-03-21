@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/models/track_watch_model.dart';
 import 'package:tasty_tracks/pages/home/widgets/track_bets.dart';
 import 'package:tasty_tracks/pages/home/widgets/track_watches.dart';
@@ -22,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   bool _isBusy;
   bool _hasError;
   TrackWatchModel _trackWatchModel;
+  TrackBetModel _trackBetModel;
 
   @override
   void initState() {
@@ -37,8 +39,11 @@ class _HomePageState extends State<HomePage> {
     });
 
     TrackWatchModel trackWatchModel;
+    TrackBetModel trackBetModel;
     try {
-      trackWatchModel = TrackWatchModel(user: await _auth.currentUser());
+      FirebaseUser user = await _auth.currentUser();
+      trackWatchModel = TrackWatchModel(user: user);
+      trackBetModel = TrackBetModel(user: user);
     } catch (e) {
       // TODO Log to error reporting
       setState(() {
@@ -49,6 +54,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _isBusy = false;
       _trackWatchModel = trackWatchModel;
+      _trackBetModel = trackBetModel;
     });
   }
 
@@ -69,7 +75,10 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 32.0),
           UserProfileWidget(),
           const SizedBox(height: 32.0),
-          TrackBets(),
+          ScopedModel<TrackBetModel>(
+            model: _trackBetModel,
+            child: TrackBets(),
+          ),
           const SizedBox(height: 32.0),
           ScopedModel<TrackWatchModel>(
             model: _trackWatchModel,
