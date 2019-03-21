@@ -38,11 +38,19 @@ class TrackWatchModel extends Model {
         .where('user_id', isEqualTo: user.uid)
         .where('track_id', isEqualTo: trackId)
         .getDocuments();
+
     if (query.documents.isEmpty) {
       return null;
     } else {
       return query.documents.first;
     }
+  }
+
+  Future<QuerySnapshot> getAll() async {
+    return _firestore
+        .collection(collectionPath)
+        .where('user_id', isEqualTo: user.uid)
+        .getDocuments();
   }
 
   Future<DocumentReference> add(String trackId) async {

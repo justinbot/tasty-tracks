@@ -1,19 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
-class TrendsWidget extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return TrendsWidgetState();
-  }
-}
-
-class TrendsWidgetState extends State<TrendsWidget> {
-  @override
-  void initState() {
-    super.initState();
-    // TODO Fetch trends data
-  }
-
+class TrackBets extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
@@ -23,10 +11,21 @@ class TrendsWidgetState extends State<TrendsWidget> {
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
+            Row(
+              children: <Widget>[
+                Icon(FeatherIcons.folder),
+                Text(
+                  'Portfolio',
+                  style: theme.textTheme.title,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
             Text(
-              'Trends',
-              style: theme.textTheme.title,
+              'Last updated time',
+              style: theme.textTheme.caption,
               textAlign: TextAlign.center,
             ),
           ],
@@ -37,7 +36,7 @@ class TrendsWidgetState extends State<TrendsWidget> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 32.0),
               child: Text(
-                'No trends to show yet!',
+                'No bets to show yet!',
                 style: theme.textTheme.caption,
               ),
             ),

@@ -1,7 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
+import 'package:tasty_tracks/models/track_watch_model.dart';
+import 'package:tasty_tracks/pages/home/widgets/track_bets.dart';
+import 'package:tasty_tracks/pages/home/widgets/track_watches.dart';
 import 'package:tasty_tracks/pages/home/widgets/user_profile_widget.dart';
-import 'package:tasty_tracks/pages/home/widgets/trends_widget.dart';
+import 'package:tasty_tracks/widgets/error_message.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class HomePage extends StatefulWidget {
   static final String routeName = '/home';
@@ -12,33 +19,69 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  UserProfileWidget _profileSummary;
-  TrendsWidget _userTrendsSummary;
+  bool _isBusy;
+  bool _hasError;
+  TrackWatchModel _trackWatchModel;
 
   @override
   void initState() {
     super.initState();
 
-    _profileSummary = UserProfileWidget();
-    _userTrendsSummary = TrendsWidget();
+    _loadData();
+  }
+
+  void _loadData() async {
+    setState(() {
+      _isBusy = true;
+      _hasError = false;
+    });
+
+    TrackWatchModel trackWatchModel;
+    try {
+      trackWatchModel = TrackWatchModel(user: await _auth.currentUser());
+    } catch (e) {
+      // TODO Log to error reporting
+      setState(() {
+        _hasError = true;
+      });
+    }
+
+    setState(() {
+      _isBusy = false;
+      _trackWatchModel = trackWatchModel;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget body;
+    if (_hasError) {
+      body = ErrorMessage(
+        errorText: 'Failed to load your home page :(',
+        onRetry: () => _loadData(),
+      );
+    } else if (_isBusy) {
+      body = CircularProgressIndicator();
+    } else {
+      body = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          const SizedBox(height: 32.0),
+          UserProfileWidget(),
+          const SizedBox(height: 32.0),
+          TrackBets(),
+          const SizedBox(height: 32.0),
+          ScopedModel<TrackWatchModel>(
+            model: _trackWatchModel,
+            child: TrackWatches(),
+          ),
+        ],
+      );
+    }
+
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              const SizedBox(height: 32.0),
-              _profileSummary,
-              const SizedBox(height: 32.0),
-              _userTrendsSummary,
-            ],
-          ),
-        ),
+        child: body,
       ),
     );
   }
