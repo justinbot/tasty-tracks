@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
@@ -8,24 +6,26 @@ import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
 import 'package:tasty_tracks/models/track_watch_model.dart';
+import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_details_placeholder.dart';
 import 'package:tasty_tracks/spotify_api.dart';
-import 'package:tasty_tracks/widgets/error_message.dart';
+import 'package:tasty_tracks/widgets/error_page.dart';
 import 'package:tasty_tracks/utils/theme_with_palette.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
-final Firestore _firestore = Firestore.instance;
 
 class TrackPage extends StatefulWidget {
   const TrackPage({
     Key key,
     this.trackId,
     this.trackImageUrl,
+    this.heroSuffix,
   }) : super(key: key);
 
   static final String routeName = '/track-details';
   final String trackId;
   final String trackImageUrl;
+  final String heroSuffix;
 
   @override
   _TrackPageState createState() => _TrackPageState();
@@ -34,12 +34,11 @@ class TrackPage extends StatefulWidget {
 class _TrackPageState extends State<TrackPage> {
   bool _isBusy = false;
   bool _hasError = false;
+  TrackBetModel _trackBetModel;
   TrackWatchModel _trackWatchModel;
   spotify.Track _track;
   spotify.Album _album;
   PaletteGenerator _palette;
-
-  StreamSubscription _watchesSubscription;
 
   @override
   void initState() {
@@ -53,7 +52,7 @@ class _TrackPageState extends State<TrackPage> {
     if (_hasError) {
       return Scaffold(
         body: SafeArea(
-          child: ErrorMessage(
+          child: ErrorPage(
             errorText: 'Failed to load track :(',
             onRetry: () => _loadData(),
           ),
@@ -63,16 +62,21 @@ class _TrackPageState extends State<TrackPage> {
       return TrackDetailsPlaceholder(
         trackId: widget.trackId,
         trackImageUrl: widget.trackImageUrl,
+        heroSuffix: widget.heroSuffix,
       );
     } else {
       return Theme(
         data: themeWithPalette(Theme.of(context), _palette),
-        child: ScopedModel<TrackWatchModel>(
-          model: _trackWatchModel,
-          child: TrackDetails(
-            track: _track,
-            album: _album,
-            palette: _palette,
+        child: ScopedModel<TrackBetModel>(
+          model: _trackBetModel,
+          child: ScopedModel<TrackWatchModel>(
+            model: _trackWatchModel,
+            child: TrackDetails(
+              track: _track,
+              album: _album,
+              palette: _palette,
+              heroSuffix: widget.heroSuffix,
+            ),
           ),
         ),
       );
@@ -86,11 +90,13 @@ class _TrackPageState extends State<TrackPage> {
     });
 
     TrackWatchModel trackWatch;
+    TrackBetModel trackBet;
     spotify.Track track;
     spotify.Album album;
     PaletteGenerator palette;
     try {
       trackWatch = TrackWatchModel(user: await _auth.currentUser());
+      trackBet = TrackBetModel(user: await _auth.currentUser());
 
       // Get track
       track = await spotifyApi.tracks.get(widget.trackId);
@@ -114,17 +120,11 @@ class _TrackPageState extends State<TrackPage> {
 
     setState(() {
       _isBusy = false;
+      _trackBetModel = trackBet;
       _trackWatchModel = trackWatch;
       _track = track;
       _album = album;
       _palette = palette;
     });
-  }
-
-  @override
-  void dispose() {
-    _watchesSubscription?.cancel();
-
-    super.dispose();
   }
 }

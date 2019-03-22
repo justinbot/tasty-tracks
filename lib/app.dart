@@ -31,41 +31,46 @@ class TastyTracksApp extends StatelessWidget {
 }
 
 Route<dynamic> _handleRoute(RouteSettings settings) {
-  // TODO Use route arguments functionality
-  // See: https://github.com/flutter/flutter/issues/6225
+  // TODO Use classes for arguments objects
   final String path = settings.name;
-  final List<String> uri = settings.name.split('/');
-  final List<String> args = uri.last.split(':');
+  final Map<String, String> arguments = settings.arguments ?? Map();
 
   if (path.startsWith(TrackPage.routeName)) {
-    String trackId = args[1];
-    String decodedTrackImageUrl;
-    if (args.length > 2) {
-      // Decode the encoded URL
-      String encodedTrackImageUrl = args[2];
-      decodedTrackImageUrl = utf8.fuse(base64Url).decode(encodedTrackImageUrl);
-    }
+    /// TrackPage
+    /// arguments:
+    /// - track_id
+    /// - track_image_url (optional)
+    /// - hero_suffix (optional)
     return MaterialPageRoute(
       settings: settings,
       builder: (BuildContext context) => TrackPage(
-            trackId: trackId,
-            trackImageUrl: decodedTrackImageUrl,
+            trackId: arguments['track_id'],
+            trackImageUrl: arguments['image_url'],
+            heroSuffix: arguments['hero_suffix'],
           ),
     );
   } else if (path.startsWith(AlbumPage.routeName)) {
-    String albumId = args[1];
+    /// AlbumPage
+    /// arguments:
+    /// - album_id
+    /// - album_image_url (optional)
+    /// - hero_suffix (optional)
     return MaterialPageRoute(
       settings: settings,
       builder: (BuildContext context) => AlbumPage(
-            albumId: albumId,
+            albumId: arguments['album_id'],
           ),
     );
   } else if (path.startsWith(ArtistPage.routeName)) {
-    String artistId = args[1];
+    /// ArtistPage
+    /// arguments:
+    /// - artist_id
+    /// - artist_image_url (optional)
+    /// - hero_suffix (optional)
     return MaterialPageRoute(
       settings: settings,
       builder: (BuildContext context) => ArtistPage(
-            artistId: artistId,
+            artistId: arguments['artist_id'],
           ),
     );
   } else {

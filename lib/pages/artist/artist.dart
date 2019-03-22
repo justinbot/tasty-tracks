@@ -4,7 +4,7 @@ import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/pages/artist/widgets/artist_details.dart';
 import 'package:tasty_tracks/spotify_api.dart';
-import 'package:tasty_tracks/widgets/error_message.dart';
+import 'package:tasty_tracks/widgets/error_page.dart';
 
 class ArtistPage extends StatefulWidget {
   const ArtistPage({
@@ -37,7 +37,7 @@ class _ArtistPageState extends State<ArtistPage> {
     if (_hasError) {
       return Scaffold(
         body: SafeArea(
-          child: ErrorMessage(
+          child: ErrorPage(
             errorText: 'Failed to load artist :(',
             onRetry: () => _loadData(),
           ),

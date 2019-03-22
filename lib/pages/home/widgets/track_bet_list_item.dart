@@ -26,7 +26,7 @@ class TrackWatchListItem extends StatelessWidget {
 
     return ListTile(
       leading: Hero(
-        tag: 'trackImageHero-${track.id}-watch',
+        tag: 'trackImageHero-${track.id}-bet',
         child: AlbumImage(
           album: track.album,
           diameter: 40.0,

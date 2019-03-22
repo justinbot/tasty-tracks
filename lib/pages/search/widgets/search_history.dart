@@ -128,9 +128,9 @@ class SearchHistory extends StatelessWidget {
                 return ListView(children: combinedResultsItems);
               }
             } else if (snapshot.hasError) {
-              print(snapshot.error);
+              // TODO Log to error reporting
               return Center(
-                child: Text('Error loading your recent searches :('),
+                child: Text('Failed to load your recent searches :('),
               );
             } else {
               return Center(

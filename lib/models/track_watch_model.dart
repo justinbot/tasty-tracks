@@ -45,11 +45,19 @@ class TrackWatchModel extends Model {
     }
   }
 
-  Future<QuerySnapshot> getAll() async {
-    return _firestore
-        .collection(collectionPath)
-        .where('user_id', isEqualTo: user.uid)
-        .getDocuments();
+  Future<QuerySnapshot> getAll({int limit}) async {
+    if (limit != null) {
+      return _firestore
+          .collection(collectionPath)
+          .where('user_id', isEqualTo: user.uid)
+          .limit(limit)
+          .getDocuments();
+    } else {
+      return _firestore
+          .collection(collectionPath)
+          .where('user_id', isEqualTo: user.uid)
+          .getDocuments();
+    }
   }
 
   Future<DocumentReference> add(String trackId) async {

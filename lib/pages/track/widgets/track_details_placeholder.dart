@@ -5,10 +5,12 @@ class TrackDetailsPlaceholder extends StatelessWidget {
     Key key,
     this.trackId,
     this.trackImageUrl,
+    this.heroSuffix,
   }) : super(key: key);
 
   final String trackId;
   final String trackImageUrl;
+  final String heroSuffix;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +39,7 @@ class TrackDetailsPlaceholder extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Hero(
-            tag: 'trackImageHero-${trackId}',
+            tag: 'trackImageHero-${heroSuffix ?? trackId}',
             child: trackImage,
           ),
         ],

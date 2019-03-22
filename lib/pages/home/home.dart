@@ -7,7 +7,7 @@ import 'package:tasty_tracks/models/track_watch_model.dart';
 import 'package:tasty_tracks/pages/home/widgets/track_bets.dart';
 import 'package:tasty_tracks/pages/home/widgets/track_watches.dart';
 import 'package:tasty_tracks/pages/home/widgets/user_profile_widget.dart';
-import 'package:tasty_tracks/widgets/error_message.dart';
+import 'package:tasty_tracks/widgets/error_page.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -62,27 +62,31 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     Widget body;
     if (_hasError) {
-      body = ErrorMessage(
+      body = ErrorPage(
         errorText: 'Failed to load your home page :(',
         onRetry: () => _loadData(),
       );
     } else if (_isBusy) {
       body = CircularProgressIndicator();
     } else {
-      body = Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      body = ListView(
         children: <Widget>[
-          const SizedBox(height: 32.0),
-          UserProfileWidget(),
-          const SizedBox(height: 32.0),
-          ScopedModel<TrackBetModel>(
-            model: _trackBetModel,
-            child: TrackBets(),
-          ),
-          const SizedBox(height: 32.0),
-          ScopedModel<TrackWatchModel>(
-            model: _trackWatchModel,
-            child: TrackWatches(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const SizedBox(height: 32.0),
+              UserProfileWidget(),
+              const SizedBox(height: 32.0),
+              ScopedModel<TrackBetModel>(
+                model: _trackBetModel,
+                child: TrackBets(),
+              ),
+              const SizedBox(height: 32.0),
+              ScopedModel<TrackWatchModel>(
+                model: _trackWatchModel,
+                child: TrackWatches(),
+              ),
+            ],
           ),
         ],
       );

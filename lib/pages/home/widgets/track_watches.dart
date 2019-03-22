@@ -68,17 +68,17 @@ class TrackWatches extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: <Widget>[
+              Text(
                 'Watching',
                 style: theme.textTheme.title,
                 textAlign: TextAlign.center,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         trackWatches,
       ],
@@ -93,8 +93,7 @@ class TrackWatches extends StatelessWidget {
       // Get corresponding tracks
       Iterable<String> trackIds =
           trackWatches.documents.map((t) => t.data['track_id'] as String);
-      List<spotify.Track> tracks =
-          (await spotifyApi.tracks.list(trackIds)).toList();
+      Iterable<spotify.Track> tracks = await spotifyApi.tracks.list(trackIds);
 
       return Map.fromIterables(trackWatches.documents, tracks);
     } else {
@@ -103,17 +102,16 @@ class TrackWatches extends StatelessWidget {
   }
 
   _onItemTapped(BuildContext context, spotify.Track selectedItem) {
-    if (selectedItem.album.images.isNotEmpty) {
-      String trackImageUrl = selectedItem.album.images.first.url;
-      // Encode the URL
-      String encodedTrackImageUrl = utf8.fuse(base64Url).encode(trackImageUrl);
-
-      Navigator.of(context).pushNamed(TrackPage.routeName +
-          ':${selectedItem.id}' +
-          ':${encodedTrackImageUrl}');
-    } else {
-      Navigator.of(context)
-          .pushNamed(TrackPage.routeName + ':${selectedItem.id}');
-    }
+    String imageUrl = selectedItem.album.images.isNotEmpty
+        ? selectedItem.album.images.first.url
+        : null;
+    Navigator.of(context).pushNamed(
+      TrackPage.routeName,
+      arguments: {
+        'track_id': selectedItem.id,
+        'image_url': imageUrl,
+        'hero_suffix': '${selectedItem.id}-watch',
+      },
+    );
   }
 }

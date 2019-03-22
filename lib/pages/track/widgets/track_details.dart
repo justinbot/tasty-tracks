@@ -6,6 +6,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/models/track_watch_model.dart';
 import 'package:tasty_tracks/pages/album/album.dart';
 import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
@@ -21,11 +22,13 @@ class TrackDetails extends StatelessWidget {
     this.track,
     this.album,
     this.palette,
+    this.heroSuffix,
   }) : super(key: key);
 
   final spotify.Track track;
   final spotify.Album album;
   final PaletteGenerator palette;
+  final String heroSuffix;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -71,7 +74,7 @@ class TrackDetails extends StatelessWidget {
     String artistNames = track.artists.map((artist) => artist.name).join(', ');
 
     Widget albumImage = Hero(
-      tag: 'trackImageHero-${track.id}',
+      tag: 'trackImageHero-${heroSuffix ?? track.id}',
       child: Material(
         elevation: 8,
         child: AlbumImage(
@@ -150,16 +153,35 @@ class TrackDetails extends StatelessWidget {
     Widget buttons = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        RaisedButton(
-          child: Text(
-            'Place Bet',
-          ),
-          color: theme.accentColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(64.0),
-          ),
-          onPressed: () {
-            // TODO Place bet on Track
+        ScopedModelDescendant<TrackBetModel>(
+          rebuildOnChange: false,
+          builder: (context, child, trackBetModel) {
+            return StreamBuilder(
+              stream: trackBetModel.snapshots(trackId: track.id),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasData && snapshot.data.documents.isNotEmpty) {
+                  return RaisedButton(
+                    child: Text('Remove bet'),
+                    color: theme.accentColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(64.0),
+                    ),
+                    onPressed: () => trackBetModel.remove(track.id),
+                  );
+                } else {
+                  return RaisedButton(
+                    child: Text('Place Bet'),
+                    color: theme.accentColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(64.0),
+                    ),
+                    // TODO Show bet dialog
+                    onPressed: () => trackBetModel.add(track.id),
+                  );
+                }
+              },
+            );
           },
         ),
         ScopedModelDescendant<TrackWatchModel>(
@@ -248,12 +270,21 @@ class TrackDetails extends StatelessWidget {
   }
 
   _viewAlbum(BuildContext context) {
-    Navigator.of(context).pushNamed(AlbumPage.routeName + ':${track.album.id}');
+    Navigator.of(context).pushNamed(
+      AlbumPage.routeName,
+      arguments: {
+        'album_id': track.album.id,
+      },
+    );
   }
 
   _viewArtist(BuildContext context) {
-    Navigator.of(context)
-        .pushNamed(ArtistPage.routeName + ':${track.artists.first.id}');
+    Navigator.of(context).pushNamed(
+      ArtistPage.routeName,
+      arguments: {
+        'artist_id': track.artists.first.id,
+      },
+    );
   }
 
   _openSpotify(BuildContext context) async {
