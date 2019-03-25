@@ -21,14 +21,13 @@ class TrackBetModel extends Model {
 
   /// Note: ScopedModelDescendants should use rebuildOnChange=false with streams.
   Stream<QuerySnapshot> snapshots({String trackId}) {
+    Query query = collection().where('user_id', isEqualTo: user.uid);
+
     if (trackId != null) {
-      return collection()
-          .where('user_id', isEqualTo: user.uid)
-          .where('track_id', isEqualTo: trackId)
-          .snapshots();
-    } else {
-      return collection().where('user_id', isEqualTo: user.uid).snapshots();
+      query = query.where('track_id', isEqualTo: trackId);
     }
+
+    return query.snapshots();
   }
 
   Future<DocumentSnapshot> get(String trackId) async {
@@ -46,18 +45,15 @@ class TrackBetModel extends Model {
   }
 
   Future<QuerySnapshot> getAll({int limit}) async {
+    Query query = _firestore
+        .collection(collectionPath)
+        .where('user_id', isEqualTo: user.uid);
+
     if (limit != null) {
-      return _firestore
-          .collection(collectionPath)
-          .where('user_id', isEqualTo: user.uid)
-          .limit(limit)
-          .getDocuments();
-    } else {
-      return _firestore
-          .collection(collectionPath)
-          .where('user_id', isEqualTo: user.uid)
-          .getDocuments();
+      query = query.limit(limit);
     }
+
+    return query.getDocuments();
   }
 
   Future<DocumentReference> add(String trackId) async {
