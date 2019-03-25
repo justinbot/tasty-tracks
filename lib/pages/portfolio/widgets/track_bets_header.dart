@@ -1,5 +1,6 @@
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class TrackBetsHeader extends StatelessWidget {
   const TrackBetsHeader({
@@ -34,7 +35,7 @@ class TrackBetsHeader extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
           Row(
@@ -53,12 +54,12 @@ class TrackBetsHeader extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    'Updated 35 minutes ago',
+                    'Updated ${timeago.format(updated)}',
                     style: theme.textTheme.caption,
                   ),
                   const SizedBox(width: 8.0),
                   Tooltip(
-                    message: 'Bet outcomes are recalculated every few hours.',
+                    message: 'Bet outcomes are re-calculated every few hours.',
                     child: Icon(
                       FeatherIcons.helpCircle,
                       color: theme.textTheme.caption.color,

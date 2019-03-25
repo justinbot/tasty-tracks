@@ -73,32 +73,15 @@ class _PortfolioPageState extends State<PortfolioPage> {
       body = CircularProgressIndicator();
     } else {
       body = TabBarView(
+        physics: NeverScrollableScrollPhysics(),
         children: [
-          ListView(
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  ScopedModel<TrackBetModel>(
-                    model: _trackBetModel,
-                    child: TrackBets(),
-                  ),
-                ],
-              ),
-            ],
+          ScopedModel<TrackBetModel>(
+            model: _trackBetModel,
+            child: TrackBets(),
           ),
-          ListView(
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  ScopedModel<TrackWatchModel>(
-                    model: _trackWatchModel,
-                    child: TrackWatches(),
-                  ),
-                ],
-              ),
-            ],
+          ScopedModel<TrackWatchModel>(
+            model: _trackWatchModel,
+            child: TrackWatches(),
           ),
           Text('History'),
         ],

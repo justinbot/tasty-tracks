@@ -7,22 +7,22 @@ import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
 
 enum MenuActions { removeWatch, viewAlbum, viewArtist }
 
-class TrackWatchListItem extends StatelessWidget {
-  const TrackWatchListItem({
+class TrackBetListItem extends StatelessWidget {
+  const TrackBetListItem({
     Key key,
     this.onTap,
     this.track,
-    this.trackWatch,
+    this.trackBet,
   }) : super(key: key);
 
   final onTap;
   final spotify.Track track;
-  final DocumentSnapshot trackWatch;
+  final DocumentSnapshot trackBet;
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    DateTime createdTimestamp = trackWatch.data['created_timestamp'];
+    DateTime createdTimestamp = trackBet.data['created_timestamp'];
 
     return ListTile(
       leading: Hero(

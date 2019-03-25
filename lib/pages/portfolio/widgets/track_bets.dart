@@ -27,6 +27,7 @@ class TrackBets extends StatelessWidget {
               if (snapshot.data.isNotEmpty) {
                 // TODO Calculate change over past day
                 // Percent or value?
+                Iterable<DocumentSnapshot> bets = snapshot.data.keys;
 
                 return Column(
                   children: [
@@ -35,41 +36,40 @@ class TrackBets extends StatelessWidget {
                       change: 1234.0,
                       updated: DateTime.now(),
                     ),
-                    Column(
-                      children: snapshot.data.keys
-                          .map((w) => TrackWatchListItem(
-                                trackWatch: w,
-                                track: snapshot.data[w],
-                                onTap: (i) => _onItemTapped(context, i),
-                              ))
-                          .toList(),
-                    )
+                    Expanded(
+                      child: Scrollbar(
+                        child: ListView.builder(
+                          itemCount: bets.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            DocumentSnapshot bet = bets.elementAt(index);
+                            spotify.Track track = snapshot.data[bet];
+
+                            return TrackBetListItem(
+                              trackBet: bet,
+                              track: track,
+                              onTap: (i) => _onItemTapped(context, i),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   ],
                 );
               } else {
                 return Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 48.0),
-                    child: Text(
-                      "You haven't bet on any tracks.",
-                      style: theme.textTheme.caption,
-                    ),
+                  child: Text(
+                    "You haven't bet on any tracks.",
+                    style: theme.textTheme.caption,
                   ),
                 );
               }
             } else if (snapshot.hasError) {
               return Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 48.0),
-                  child: Text('Failed to load your portfolio :('),
-                ),
+                child: Text('Failed to load your portfolio :('),
               );
             } else {
               return Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 48.0),
-                  child: CircularProgressIndicator(),
-                ),
+                child: CircularProgressIndicator(),
               );
             }
           },
@@ -77,12 +77,7 @@ class TrackBets extends StatelessWidget {
       },
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        trackBets,
-      ],
-    );
+    return trackBets;
   }
 
   Future<Map<DocumentSnapshot, spotify.Track>> _loadData(

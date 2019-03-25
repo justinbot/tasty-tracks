@@ -24,39 +24,38 @@ class TrackWatches extends StatelessWidget {
               AsyncSnapshot<Map<DocumentSnapshot, spotify.Track>> snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data.isNotEmpty) {
-                return Column(
-                  children: snapshot.data.keys
-                      .map((w) => TrackWatchListItem(
-                            trackWatch: w,
-                            track: snapshot.data[w],
-                            onTap: (i) => _onItemTapped(context, i),
-                          ))
-                      .toList(),
+                Iterable<DocumentSnapshot> watches = snapshot.data.keys;
+
+                return Scrollbar(
+                  child: ListView.builder(
+                    itemCount: watches.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      DocumentSnapshot watch = watches.elementAt(index);
+                      spotify.Track track = snapshot.data[watch];
+
+                      return TrackWatchListItem(
+                        trackWatch: watch,
+                        track: track,
+                        onTap: (i) => _onItemTapped(context, i),
+                      );
+                    },
+                  ),
                 );
               } else {
                 return Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 48.0),
-                    child: Text(
-                      'No tracks being watched.',
-                      style: theme.textTheme.caption,
-                    ),
+                  child: Text(
+                    'No tracks being watched.',
+                    style: theme.textTheme.caption,
                   ),
                 );
               }
             } else if (snapshot.hasError) {
               return Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 48.0),
-                  child: Text('Failed to load your watched tracks :('),
-                ),
+                child: Text('Failed to load your watched tracks :('),
               );
             } else {
               return Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 48.0),
-                  child: CircularProgressIndicator(),
-                ),
+                child: CircularProgressIndicator(),
               );
             }
           },
@@ -64,12 +63,7 @@ class TrackWatches extends StatelessWidget {
       },
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        trackWatches,
-      ],
-    );
+    return trackWatches;
   }
 
   Future<Map<DocumentSnapshot, spotify.Track>> _loadData(
