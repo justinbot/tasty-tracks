@@ -27,13 +27,13 @@ class _PortfolioPageState extends State<PortfolioPage> {
   TrackBetModel _trackBetModel;
 
   @override
-  void initState() {
+  initState() {
     super.initState();
 
     _loadData();
   }
 
-  void _loadData() async {
+  _loadData() async {
     setState(() {
       _isBusy = true;
       _hasError = false;
@@ -61,6 +61,8 @@ class _PortfolioPageState extends State<PortfolioPage> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     Widget body;
     if (_hasError) {
       body = ErrorPage(
@@ -107,7 +109,10 @@ class _PortfolioPageState extends State<PortfolioPage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('TODO Title'),
+          title: Text(
+            '999,999.99',
+            style: theme.textTheme.headline.copyWith(color: theme.accentColor),
+          ),
           actions: <Widget>[
             IconButton(
               icon: Icon(FeatherIcons.moreVertical),

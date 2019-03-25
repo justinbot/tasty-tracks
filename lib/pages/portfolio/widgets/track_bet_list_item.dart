@@ -35,12 +35,17 @@ class TrackWatchListItem extends StatelessWidget {
       ),
       title: Text(
         track.name,
-        style: theme.textTheme.subtitle,
+        style: theme.textTheme.subhead,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
       // TODO Display Explicit and other data in subtitle
-      subtitle: Text(
-        'Added ${DateFormat.yMMMd().format(createdTimestamp)}',
-        style: theme.textTheme.caption,
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('${track.popularity}/100 popularity'),
+          Text('Added ${DateFormat.yMMMd().format(createdTimestamp)}')
+        ],
       ),
       trailing: PopupMenuButton(
         onSelected: (MenuActions result) {

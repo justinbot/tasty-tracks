@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/pages/portfolio/widgets/track_bet_list_item.dart';
+import 'package:tasty_tracks/pages/portfolio/widgets/track_bets_header.dart';
 import 'package:tasty_tracks/pages/track/track.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 
@@ -25,14 +25,26 @@ class TrackBets extends StatelessWidget {
               AsyncSnapshot<Map<DocumentSnapshot, spotify.Track>> snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data.isNotEmpty) {
+                // TODO Calculate change over past day
+                // Percent or value?
+
                 return Column(
-                  children: snapshot.data.keys
-                      .map((w) => TrackWatchListItem(
-                            trackWatch: w,
-                            track: snapshot.data[w],
-                            onTap: (i) => _onItemTapped(context, i),
-                          ))
-                      .toList(),
+                  children: [
+                    TrackBetsHeader(
+                      // TODO
+                      change: 1234.0,
+                      updated: DateTime.now(),
+                    ),
+                    Column(
+                      children: snapshot.data.keys
+                          .map((w) => TrackWatchListItem(
+                                trackWatch: w,
+                                track: snapshot.data[w],
+                                onTap: (i) => _onItemTapped(context, i),
+                              ))
+                          .toList(),
+                    )
+                  ],
                 );
               } else {
                 return Center(
