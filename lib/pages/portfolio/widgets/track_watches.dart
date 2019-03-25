@@ -6,21 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
-import 'package:tasty_tracks/models/track_bet_model.dart';
-import 'package:tasty_tracks/pages/home/widgets/track_bet_list_item.dart';
+import 'package:tasty_tracks/models/track_watch_model.dart';
+import 'package:tasty_tracks/pages/portfolio/widgets/track_watch_list_item.dart';
 import 'package:tasty_tracks/pages/track/track.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 
-class TrackBets extends StatelessWidget {
+class TrackWatches extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    Widget trackBets = ScopedModelDescendant<TrackBetModel>(
+    Widget trackWatches = ScopedModelDescendant<TrackWatchModel>(
       rebuildOnChange: false,
-      builder: (context, child, trackBetModel) {
+      builder: (context, child, trackWatchModel) {
         return FutureBuilder<Map<DocumentSnapshot, spotify.Track>>(
-          future: _loadData(trackBetModel),
+          future: _loadData(trackWatchModel),
           builder: (BuildContext context,
               AsyncSnapshot<Map<DocumentSnapshot, spotify.Track>> snapshot) {
             if (snapshot.hasData) {
@@ -39,7 +39,7 @@ class TrackBets extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 48.0),
                     child: Text(
-                      "You haven't bet on any tracks.",
+                      'No tracks being watched.',
                       style: theme.textTheme.caption,
                     ),
                   ),
@@ -49,7 +49,7 @@ class TrackBets extends StatelessWidget {
               return Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 48.0),
-                  child: Text('Failed to load your portfolio :('),
+                  child: Text('Failed to load your watched tracks :('),
                 ),
               );
             } else {
@@ -67,35 +67,23 @@ class TrackBets extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: <Widget>[
-              Text(
-                'Portfolio',
-                style: theme.textTheme.title,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-        trackBets
+      children: [
+        trackWatches,
       ],
     );
   }
 
   Future<Map<DocumentSnapshot, spotify.Track>> _loadData(
-      TrackBetModel trackBetModel) async {
-    QuerySnapshot trackBets = await trackBetModel.getAll();
+      TrackWatchModel trackWatchModel) async {
+    QuerySnapshot trackWatches = await trackWatchModel.getAll();
 
-    if (trackBets.documents.isNotEmpty) {
+    if (trackWatches.documents.isNotEmpty) {
       // Get corresponding tracks
       Iterable<String> trackIds =
-          trackBets.documents.map((t) => t.data['track_id'] as String);
+          trackWatches.documents.map((t) => t.data['track_id'] as String);
       Iterable<spotify.Track> tracks = await spotifyApi.tracks.list(trackIds);
 
-      return Map.fromIterables(trackBets.documents, tracks);
+      return Map.fromIterables(trackWatches.documents, tracks);
     } else {
       return Map();
     }
@@ -109,8 +97,8 @@ class TrackBets extends StatelessWidget {
       TrackPage.routeName,
       arguments: {
         'track_id': selectedItem.id,
-        'image_url': imageUrl,
-        'hero_suffix': '${selectedItem.id}-bet',
+        'track_image_url': imageUrl,
+        'hero_suffix': '${selectedItem.id}-watch',
       },
     );
   }

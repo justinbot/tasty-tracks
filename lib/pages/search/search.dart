@@ -83,7 +83,8 @@ class _SearchPageState extends State<SearchPage> {
         Navigator.of(context).pushNamed(
           AlbumPage.routeName,
           arguments: {
-            'track_id': selectedItem.id,
+            'album_id': selectedItem.id,
+            'hero_suffix': '${selectedItem.id}-search',
           },
         );
       } else if (selectedItem is spotify.ArtistSimple) {
@@ -92,6 +93,7 @@ class _SearchPageState extends State<SearchPage> {
           ArtistPage.routeName,
           arguments: {
             'artist_id': selectedItem.id,
+            'hero_suffix': '${selectedItem.id}-search',
           },
         );
       } else if (selectedItem is spotify.Track) {
@@ -102,6 +104,7 @@ class _SearchPageState extends State<SearchPage> {
             arguments: {
               'track_id': selectedItem.id,
               'track_image_url': selectedItem.album.images.first.url,
+              'hero_suffix': '${selectedItem.id}-search',
             },
           );
         } else {
@@ -109,6 +112,7 @@ class _SearchPageState extends State<SearchPage> {
             TrackPage.routeName,
             arguments: {
               'track_id': selectedItem.id,
+              'hero_suffix': '${selectedItem.id}-search',
             },
           );
         }

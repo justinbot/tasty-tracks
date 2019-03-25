@@ -53,6 +53,10 @@ class TrackDetailsPlaceholder extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             header,
+            Center(
+              heightFactor: 4.0,
+              child: CircularProgressIndicator(),
+            ),
           ],
         ),
       ),

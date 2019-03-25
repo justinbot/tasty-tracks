@@ -20,7 +20,7 @@ class TrackSearchItem extends StatelessWidget {
 
     return ListTile(
       leading: Hero(
-        tag: 'trackImageHero-${track.id}',
+        tag: 'trackImageHero-${track.id}-search',
         child: AlbumImage(
           album: track.album,
           diameter: 40.0,

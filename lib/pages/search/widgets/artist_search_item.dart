@@ -19,7 +19,7 @@ class ArtistSearchItem extends StatelessWidget {
 
     return ListTile(
       leading: Hero(
-        tag: 'artistImageHero-${artist.id}',
+        tag: 'artistImageHero-${artist.id}-search',
         child: ArtistImage(
           artist: artist,
           diameter: 40.0,

@@ -45,7 +45,7 @@ Route<dynamic> _handleRoute(RouteSettings settings) {
       settings: settings,
       builder: (BuildContext context) => TrackPage(
             trackId: arguments['track_id'],
-            trackImageUrl: arguments['image_url'],
+            trackImageUrl: arguments['track_image_url'],
             heroSuffix: arguments['hero_suffix'],
           ),
     );
