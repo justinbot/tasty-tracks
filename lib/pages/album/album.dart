@@ -12,7 +12,7 @@ class AlbumPage extends StatefulWidget {
     this.albumId,
   }) : super(key: key);
 
-  static final String routeName = '/album-details';
+  static const String routeName = '/album-details';
   final String albumId;
 
   @override

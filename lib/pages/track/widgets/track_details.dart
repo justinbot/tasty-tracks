@@ -12,6 +12,7 @@ import 'package:tasty_tracks/pages/album/album.dart';
 import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
 import 'package:tasty_tracks/pages/artist/artist.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_preview_player.dart';
+import 'package:tasty_tracks/pages/track_bet/create.dart';
 import 'package:tasty_tracks/utils/format_date.dart';
 
 enum MenuActions { viewAlbum, viewArtist, openSpotify }
@@ -177,7 +178,7 @@ class TrackDetails extends StatelessWidget {
                       borderRadius: BorderRadius.circular(64.0),
                     ),
                     // TODO Show bet dialog
-                    onPressed: () => trackBetModel.add(track.id),
+                    onPressed: () => _placeBet(context),
                   );
                 }
               },
@@ -266,6 +267,15 @@ class TrackDetails extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  _placeBet(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      TrackBetCreate.routeName,
+      arguments: {
+        'track_id': track.id,
+      },
     );
   }
 

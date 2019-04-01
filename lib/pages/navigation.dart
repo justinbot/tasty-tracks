@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
-import 'package:tasty_tracks/pages/home/home.dart';
 import 'package:tasty_tracks/pages/portfolio/portfolio.dart';
 import 'package:tasty_tracks/pages/search/search.dart';
 import 'package:tasty_tracks/pages/settings/settings.dart';

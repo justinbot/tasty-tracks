@@ -4,17 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
-import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
-import 'package:tasty_tracks/models/track_watch_model.dart';
 import 'package:tasty_tracks/models/track_bet_model.dart';
+import 'package:tasty_tracks/models/track_watch_model.dart';
+import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_details_placeholder.dart';
 import 'package:tasty_tracks/spotify_api.dart';
-import 'package:tasty_tracks/widgets/error_page.dart';
 import 'package:tasty_tracks/utils/theme_with_palette.dart';
+import 'package:tasty_tracks/widgets/error_page.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class TrackPage extends StatefulWidget {
+  // TODO take trackId or spotify.Track object
   const TrackPage({
     Key key,
     this.trackId,
@@ -22,7 +23,7 @@ class TrackPage extends StatefulWidget {
     this.heroSuffix,
   }) : super(key: key);
 
-  static final String routeName = '/track-details';
+  static const String routeName = '/track-details';
   final String trackId;
   final String trackImageUrl;
   final String heroSuffix;

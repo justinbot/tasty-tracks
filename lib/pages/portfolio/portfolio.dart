@@ -7,7 +7,6 @@ import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/models/track_watch_model.dart';
 import 'package:tasty_tracks/pages/portfolio/widgets/track_bets.dart';
 import 'package:tasty_tracks/pages/portfolio/widgets/track_watches.dart';
-import 'package:tasty_tracks/pages/home/widgets/user_profile.dart';
 import 'package:tasty_tracks/widgets/error_page.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;

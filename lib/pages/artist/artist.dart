@@ -12,7 +12,7 @@ class ArtistPage extends StatefulWidget {
     this.artistId,
   }) : super(key: key);
 
-  static final String routeName = '/artist-details';
+  static const String routeName = '/artist-details';
   final String artistId;
 
   @override
