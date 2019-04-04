@@ -13,6 +13,7 @@ import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_placeholder.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_preview_player.dart';
 import 'package:tasty_tracks/pages/track_bet/track_bet_create.dart';
+import 'package:tasty_tracks/pages/track_bet/widgets/track_bet_details.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 import 'package:tasty_tracks/utils/theme_with_palette.dart';
 import 'package:tasty_tracks/widgets/error_page.dart';
@@ -109,13 +110,10 @@ class _TrackPageState extends State<TrackPage> {
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData && snapshot.data.documents.isNotEmpty) {
-                    return RaisedButton(
-                      child: Text('Remove bet'),
-                      color: theme.accentColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(64.0),
-                      ),
-                      onPressed: () => trackBetModel.remove(_track.id),
+                    DocumentSnapshot trackBet = snapshot.data.documents.first;
+                    return TrackBetDetails(
+                      trackBet: trackBet,
+                      onPressed: () => _cancelBet(context, trackBetModel),
                     );
                   } else {
                     return RaisedButton(
@@ -142,6 +140,8 @@ class _TrackPageState extends State<TrackPage> {
                   if (snapshot.hasData && snapshot.data.documents.isNotEmpty) {
                     return OutlineButton(
                       child: Text('Remove watch'),
+                      highlightedBorderColor: theme.accentColor,
+                      splashColor: theme.accentColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(64.0),
                       ),
@@ -150,6 +150,8 @@ class _TrackPageState extends State<TrackPage> {
                   } else {
                     return OutlineButton(
                       child: Text('Watch'),
+                      highlightedBorderColor: theme.accentColor,
+                      splashColor: theme.accentColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(64.0),
                       ),
@@ -293,17 +295,21 @@ class _TrackPageState extends State<TrackPage> {
       builder: (BuildContext context) {
         return TrackBetCreate(
           trackId: _track.id,
+          trackImageUrl: widget.trackImageUrl,
           heroSuffix: widget.heroSuffix,
         );
       },
       fullscreenDialog: true,
     ));
 
-    if (bet == null) {
-      String errorMessage = "Couldn't place bet.";
-      Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
-    } else {
+    if (bet != null) {
       Scaffold.of(context).showSnackBar(SnackBar(content: Text('Bet placed.')));
     }
+  }
+
+  _cancelBet(BuildContext context, TrackBetModel trackBetModel) async {
+    await trackBetModel.remove(_track.id);
+    Scaffold.of(context)
+        .showSnackBar(SnackBar(content: Text('Bet cashed out.')));
   }
 }

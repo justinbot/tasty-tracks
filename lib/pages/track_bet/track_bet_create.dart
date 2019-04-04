@@ -7,7 +7,6 @@ import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
-import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
 import 'package:tasty_tracks/pages/track_bet/widgets/track_bet_create_placeholder.dart';
 import 'package:tasty_tracks/pages/track_bet/widgets/track_bet_create_form.dart';
 import 'package:tasty_tracks/spotify_api.dart';
@@ -60,12 +59,10 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
         ),
       );
     } else if (_isBusy) {
-      return Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
+      return TrackBetCreatePlaceholder(
+        trackId: widget.trackId,
+        trackImageUrl: widget.trackImageUrl,
+        heroSuffix: widget.heroSuffix,
       );
     } else {
       ThemeData theme = themeWithPalette(Theme.of(context), _palette);

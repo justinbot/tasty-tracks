@@ -56,7 +56,7 @@ class TrackBetModel extends Model {
     return query.getDocuments();
   }
 
-  Future<DocumentReference> add(String trackId) async {
+  Future<DocumentReference> add(String trackId, double amount) async {
     // TODO This should be a call to a cloud function rather than direct write.
     FirebaseUser user = await _auth.currentUser();
     // TODO Run query and write in same transaction
@@ -71,6 +71,7 @@ class TrackBetModel extends Model {
         'created_timestamp': FieldValue.serverTimestamp(),
         'track_id': trackId,
         'user_id': user.uid,
+        'amount': amount,
       });
       notifyListeners();
       return reference;

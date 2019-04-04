@@ -60,7 +60,8 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(64.0),
                 ),
-                onPressed: _busy ? null : () => _placeBet(context, trackBetModel),
+                onPressed:
+                    _busy ? null : () => _placeBet(context, trackBetModel),
               );
             },
           ),
@@ -85,7 +86,17 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
       _busy = true;
     });
 
-    DocumentReference bet = await trackBetModel.add(widget.trackId);
-    Navigator.of(context).pop(bet);
+    DocumentReference bet = await trackBetModel.add(widget.trackId, betAmount);
+    if (bet == null) {
+      // Failed to create bet
+      setState(() {
+        _busy = false;
+      });
+
+      String errorMessage = "Couldn't place bet.";
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+    } else {
+      Navigator.of(context).pop(bet);
+    }
   }
 }
