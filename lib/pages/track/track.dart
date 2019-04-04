@@ -7,9 +7,10 @@ import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/models/track_watch_model.dart';
+import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_app_bar.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
-import 'package:tasty_tracks/pages/track/widgets/track_details_placeholder.dart';
+import 'package:tasty_tracks/pages/track/widgets/track_placeholder.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_preview_player.dart';
 import 'package:tasty_tracks/pages/track_bet/track_bet_create.dart';
 import 'package:tasty_tracks/spotify_api.dart';
@@ -71,6 +72,16 @@ class _TrackPageState extends State<TrackPage> {
       );
     } else {
       ThemeData theme = themeWithPalette(Theme.of(context), _palette);
+
+      Widget albumImage = Hero(
+        tag: 'trackImageHero-${widget.heroSuffix ?? _track.id}',
+        child: Material(
+          elevation: 8,
+          child: AlbumImage(
+            album: _album,
+          ),
+        ),
+      );
 
       Widget popularity = Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -175,22 +186,6 @@ class _TrackPageState extends State<TrackPage> {
         ],
       );
 
-      Widget body = Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            popularity,
-            const SizedBox(height: 8.0),
-            buttons,
-            const SizedBox(height: 8.0),
-            previewPlayer,
-            const SizedBox(height: 16.0),
-            credits,
-          ],
-        ),
-      );
-
       return ScopedModel<TrackBetModel>(
         model: _trackBetModel,
         child: ScopedModel<TrackWatchModel>(
@@ -202,19 +197,43 @@ class _TrackPageState extends State<TrackPage> {
                 track: _track,
                 album: _album,
               ),
-              body: SafeArea(
-                child: ListView(
-                  padding: EdgeInsets.only(
-                    bottom: 64.0,
+              body: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      theme.accentColor.withOpacity(0.25),
+                      theme.accentColor.withOpacity(0.0)
+                    ],
                   ),
-                  children: [
-                    TrackDetails(
-                      track: _track,
-                      album: _album,
-                      heroSuffix: widget.heroSuffix,
+                ),
+                child: SafeArea(
+                  child: ListView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 32.0,
+                      vertical: 32.0,
                     ),
-                    body,
-                  ],
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 32.0),
+                        child: albumImage,
+                      ),
+                      const SizedBox(height: 16.0),
+                      TrackDetails(
+                        track: _track,
+                        album: _album,
+                        center: true,
+                      ),
+                      popularity,
+                      const SizedBox(height: 8.0),
+                      buttons,
+                      const SizedBox(height: 8.0),
+                      previewPlayer,
+                      const SizedBox(height: 16.0),
+                      credits,
+                    ],
+                  ),
                 ),
               ),
             ),

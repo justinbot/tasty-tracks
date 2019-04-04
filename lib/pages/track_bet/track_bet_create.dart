@@ -5,7 +5,11 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/models/track_bet_model.dart';
+import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
+import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
+import 'package:tasty_tracks/pages/track_bet/widgets/track_bet_create_placeholder.dart';
 import 'package:tasty_tracks/spotify_api.dart';
+import 'package:tasty_tracks/utils/theme_with_palette.dart';
 import 'package:tasty_tracks/widgets/error_page.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -62,21 +66,57 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
         ),
       );
     } else {
+      ThemeData theme = themeWithPalette(Theme.of(context), _palette);
+
+      Widget albumImage = Hero(
+        tag: 'trackImageHero-${widget.heroSuffix ?? _track.id}',
+        child: Material(
+          elevation: 8,
+          child: AlbumImage(
+            album: _album,
+          ),
+        ),
+      );
+
       return ScopedModel<TrackBetModel>(
         model: _trackBetModel,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Place bet'),
-          ),
-          body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Track name'),
-                  Text('Artist name'),
-                ],
+        child: Theme(
+          data: themeWithPalette(Theme.of(context), _palette),
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: theme.accentColor.withOpacity(0.15),
+            ),
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    theme.accentColor.withOpacity(0.25),
+                    theme.accentColor.withOpacity(0.0)
+                  ],
+                ),
+              ),
+              child: SafeArea(
+                child: ListView(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 32.0,
+                    vertical: 32.0,
+                  ),
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 64.0),
+                      child: albumImage,
+                    ),
+                    const SizedBox(height: 16.0),
+                    TrackDetails(
+                      track: _track,
+                      album: _album,
+                      center: true,
+                    ),
+                    const SizedBox(height: 8.0),
+                  ],
+                ),
               ),
             ),
           ),

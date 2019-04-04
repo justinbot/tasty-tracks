@@ -16,10 +16,6 @@ class TrackDetailsPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    Widget appBar = AppBar(
-      backgroundColor: theme.canvasColor,
-    );
-
     Widget trackImage;
 
     if (trackImageUrl != null) {
@@ -34,25 +30,25 @@ class TrackDetailsPlaceholder extends StatelessWidget {
       );
     }
 
-    Widget header = Container(
-      padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 16.0),
-      child: Column(
-        children: <Widget>[
-          Hero(
-            tag: 'trackImageHero-${heroSuffix ?? trackId}',
-            child: trackImage,
-          ),
-        ],
-      ),
-    );
-
     return Scaffold(
-      appBar: appBar,
+      appBar: AppBar(
+        backgroundColor: theme.canvasColor,
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            header,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 32.0),
+              child: Column(
+                children: [
+                  Hero(
+                    tag: 'trackImageHero-${heroSuffix ?? trackId}',
+                    child: trackImage,
+                  ),
+                ],
+              ),
+            ),
             Center(
               heightFactor: 4.0,
               child: CircularProgressIndicator(),
