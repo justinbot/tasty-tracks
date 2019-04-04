@@ -1,11 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+
+import 'package:tasty_tracks/models/track_bet_model.dart';
 
 class TrackBetCreateForm extends StatefulWidget {
+  const TrackBetCreateForm({
+    Key key,
+    this.trackId,
+  }) : super(key: key);
+
+  final String trackId;
+
   @override
   _TrackBetCreateFormState createState() => _TrackBetCreateFormState();
 }
 
 class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
+  final _formKey = GlobalKey<FormState>();
   final _betAmountController = TextEditingController();
   bool _busy = false;
 
@@ -14,6 +26,7 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
     ThemeData theme = Theme.of(context);
 
     return Form(
+      key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -33,24 +46,46 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
             validator: (value) {
               if (value.isEmpty) {
                 return 'Please enter a bet amount';
+              } else if (double.tryParse(value) == null) {
+                return 'Invalid bet amount';
               }
             },
           ),
           const SizedBox(height: 16.0),
-          RaisedButton(
-            child: Text('Place bet'),
-            color: theme.accentColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(64.0),
-            ),
-            onPressed: _busy ? null : _placeBet,
+          ScopedModelDescendant<TrackBetModel>(
+            builder: (context, child, trackBetModel) {
+              return RaisedButton(
+                child: Text('Place bet'),
+                color: theme.accentColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(64.0),
+                ),
+                onPressed: _busy ? null : () => _placeBet(context, trackBetModel),
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  _placeBet() async {
-    // TODO Show bet dialog
+  _placeBet(BuildContext context, TrackBetModel trackBetModel) async {
+    // Dismiss keyboard
+    FocusScope.of(context).requestFocus(FocusNode());
+
+    bool valid = _formKey.currentState.validate();
+    if (!valid) {
+      return;
+    }
+
+    // TODO
+    double betAmount = double.parse(_betAmountController.text);
+
+    setState(() {
+      _busy = true;
+    });
+
+    DocumentReference bet = await trackBetModel.add(widget.trackId);
+    Navigator.of(context).pop(bet);
   }
 }

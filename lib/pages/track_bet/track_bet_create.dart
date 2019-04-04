@@ -166,7 +166,9 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
                         ],
                       ),
                       const Divider(height: 64.0),
-                      TrackBetCreateForm(),
+                      TrackBetCreateForm(
+                        trackId: _track.id,
+                      ),
                     ],
                   ),
                 ),

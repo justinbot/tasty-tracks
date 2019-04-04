@@ -288,8 +288,8 @@ class _TrackPageState extends State<TrackPage> {
     });
   }
 
-  _placeBet(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(
+  _placeBet(BuildContext context) async {
+    DocumentReference bet = await Navigator.of(context).push(MaterialPageRoute(
       builder: (BuildContext context) {
         return TrackBetCreate(
           trackId: _track.id,
@@ -298,5 +298,12 @@ class _TrackPageState extends State<TrackPage> {
       },
       fullscreenDialog: true,
     ));
+
+    if (bet == null) {
+      String errorMessage = "Couldn't place bet.";
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+    } else {
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Bet placed.')));
+    }
   }
 }

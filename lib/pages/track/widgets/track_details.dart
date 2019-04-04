@@ -10,11 +10,13 @@ class TrackDetails extends StatelessWidget {
     this.track,
     this.album,
     this.center = false,
+    this.heroSuffix,
   }) : super(key: key);
 
   final spotify.Track track;
   final spotify.Album album;
   final bool center;
+  final String heroSuffix;
 
   @override
   Widget build(BuildContext context) {
@@ -23,30 +25,36 @@ class TrackDetails extends StatelessWidget {
     String artistNames = track.artists.map((artist) => artist.name).join(', ');
 
     return Column(
-      crossAxisAlignment: center ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      crossAxisAlignment:
+          center ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
         Text(
           track.name,
           style: theme.textTheme.headline.copyWith(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 4.0),
         Text(
           artistNames,
           style: theme.textTheme.subhead,
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 16.0),
         Text(
           '${album.name}',
           style: theme.textTheme.subtitle,
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 4.0),
         Text(
           formatDate(album.releaseDate, album.releaseDatePrecision),
           style: theme.textTheme.caption,
+          textAlign: TextAlign.center,
         ),
         Text(
           printDuration(track.duration),
           style: theme.textTheme.caption,
+          textAlign: TextAlign.center,
         ),
       ],
     );
