@@ -1,13 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/models/track_watch_model.dart';
+import 'package:tasty_tracks/pages/track/widgets/track_app_bar.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_details_placeholder.dart';
+import 'package:tasty_tracks/pages/track/widgets/track_preview_player.dart';
+import 'package:tasty_tracks/pages/track_bet/track_bet_create.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 import 'package:tasty_tracks/utils/theme_with_palette.dart';
 import 'package:tasty_tracks/widgets/error_page.dart';
@@ -66,17 +70,153 @@ class _TrackPageState extends State<TrackPage> {
         heroSuffix: widget.heroSuffix,
       );
     } else {
-      return Theme(
-        data: themeWithPalette(Theme.of(context), _palette),
-        child: ScopedModel<TrackBetModel>(
-          model: _trackBetModel,
-          child: ScopedModel<TrackWatchModel>(
-            model: _trackWatchModel,
-            child: TrackDetails(
-              track: _track,
-              album: _album,
-              palette: _palette,
-              heroSuffix: widget.heroSuffix,
+      ThemeData theme = themeWithPalette(Theme.of(context), _palette);
+
+      Widget popularity = Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '${_track.popularity}',
+            style: theme.textTheme.display2.copyWith(color: theme.accentColor),
+          ),
+          const SizedBox(width: 4.0),
+          Text(
+            '/100 popularity',
+            style: theme.textTheme.subhead,
+          ),
+        ],
+      );
+
+      Widget buttons = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ScopedModelDescendant<TrackBetModel>(
+            rebuildOnChange: false,
+            builder: (context, child, trackBetModel) {
+              return StreamBuilder(
+                stream: trackBetModel.snapshots(trackId: _track.id),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasData && snapshot.data.documents.isNotEmpty) {
+                    return RaisedButton(
+                      child: Text('Remove bet'),
+                      color: theme.accentColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(64.0),
+                      ),
+                      onPressed: () => trackBetModel.remove(_track.id),
+                    );
+                  } else {
+                    return RaisedButton(
+                      child: Text('Place bet...'),
+                      color: theme.accentColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(64.0),
+                      ),
+                      // TODO Show bet dialog
+                      onPressed: () => _placeBet(context),
+                    );
+                  }
+                },
+              );
+            },
+          ),
+          ScopedModelDescendant<TrackWatchModel>(
+            rebuildOnChange: false,
+            builder: (context, child, trackWatchModel) {
+              return StreamBuilder(
+                stream: trackWatchModel.snapshots(trackId: _track.id),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasData && snapshot.data.documents.isNotEmpty) {
+                    return OutlineButton(
+                      child: Text('Remove watch'),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(64.0),
+                      ),
+                      onPressed: () => trackWatchModel.remove(_track.id),
+                    );
+                  } else {
+                    return OutlineButton(
+                      child: Text('Watch'),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(64.0),
+                      ),
+                      onPressed: () => trackWatchModel.add(_track.id),
+                    );
+                  }
+                },
+              );
+            },
+          ),
+        ],
+      );
+
+      Widget previewPlayer = TrackPreviewPlayer(previewUrl: _track.previewUrl);
+
+      Widget copyrights = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _album.copyrights.map((c) {
+          return Text(
+            c.text,
+            style: theme.textTheme.caption,
+          );
+        }).toList(),
+      );
+
+      Widget credits = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Available in ${_album.availableMarkets.length} markets.'),
+          const SizedBox(height: 8.0),
+          Text('${_album.label}'),
+          const SizedBox(height: 4.0),
+          copyrights,
+        ],
+      );
+
+      Widget body = Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            popularity,
+            const SizedBox(height: 8.0),
+            buttons,
+            const SizedBox(height: 8.0),
+            previewPlayer,
+            const SizedBox(height: 16.0),
+            credits,
+          ],
+        ),
+      );
+
+      return ScopedModel<TrackBetModel>(
+        model: _trackBetModel,
+        child: ScopedModel<TrackWatchModel>(
+          model: _trackWatchModel,
+          child: Theme(
+            data: themeWithPalette(Theme.of(context), _palette),
+            child: Scaffold(
+              appBar: TrackAppBar(
+                track: _track,
+                album: _album,
+              ),
+              body: SafeArea(
+                child: ListView(
+                  padding: EdgeInsets.only(
+                    bottom: 64.0,
+                  ),
+                  children: [
+                    TrackDetails(
+                      track: _track,
+                      album: _album,
+                      heroSuffix: widget.heroSuffix,
+                    ),
+                    body,
+                  ],
+                ),
+              ),
             ),
           ),
         ),
@@ -127,5 +267,17 @@ class _TrackPageState extends State<TrackPage> {
       _album = album;
       _palette = palette;
     });
+  }
+
+  _placeBet(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (BuildContext context) {
+        return TrackBetCreate(
+          trackId: _track.id,
+          heroSuffix: widget.heroSuffix,
+        );
+      },
+      fullscreenDialog: true,
+    ));
   }
 }
