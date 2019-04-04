@@ -1,3 +1,4 @@
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -8,6 +9,7 @@ import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
 import 'package:tasty_tracks/pages/track/widgets/track_details.dart';
 import 'package:tasty_tracks/pages/track_bet/widgets/track_bet_create_placeholder.dart';
+import 'package:tasty_tracks/pages/track_bet/widgets/track_bet_create_form.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 import 'package:tasty_tracks/utils/theme_with_palette.dart';
 import 'package:tasty_tracks/widgets/error_page.dart';
@@ -68,6 +70,9 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
     } else {
       ThemeData theme = themeWithPalette(Theme.of(context), _palette);
 
+      String artistNames =
+          _track.artists.map((artist) => artist.name).join(', ');
+
       Widget albumImage = Hero(
         tag: 'trackImageHero-${widget.heroSuffix ?? _track.id}',
         child: Material(
@@ -78,6 +83,20 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
         ),
       );
 
+      Widget popularity = Row(
+        children: [
+          Text(
+            '${_track.popularity}',
+            style: theme.textTheme.display2.copyWith(color: theme.accentColor),
+          ),
+          const SizedBox(width: 4.0),
+          Text(
+            '/100 popularity',
+            style: theme.textTheme.subhead,
+          ),
+        ],
+      );
+
       return ScopedModel<TrackBetModel>(
         model: _trackBetModel,
         child: Theme(
@@ -85,6 +104,15 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
           child: Scaffold(
             appBar: AppBar(
               backgroundColor: theme.accentColor.withOpacity(0.15),
+              title: Text('Place bet'),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(FeatherIcons.helpCircle),
+                  onPressed: () {
+                    // TODO
+                  },
+                ),
+              ],
             ),
             body: Container(
               decoration: BoxDecoration(
@@ -98,24 +126,49 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
                 ),
               ),
               child: SafeArea(
-                child: ListView(
+                child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(
                     horizontal: 32.0,
                     vertical: 32.0,
                   ),
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 64.0),
-                      child: albumImage,
-                    ),
-                    const SizedBox(height: 16.0),
-                    TrackDetails(
-                      track: _track,
-                      album: _album,
-                      center: true,
-                    ),
-                    const SizedBox(height: 8.0),
-                  ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: albumImage,
+                          ),
+                          SizedBox(width: 32.0),
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                popularity,
+                                Text(
+                                  _track.name,
+                                  style: theme.textTheme.headline
+                                      .copyWith(fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.start,
+                                ),
+                                const SizedBox(height: 4.0),
+                                Text(
+                                  artistNames,
+                                  style: theme.textTheme.subhead,
+                                  textAlign: TextAlign.start,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Divider(height: 64.0),
+                      TrackBetCreateForm(),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -11,31 +11,46 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return Form(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
+        children: [
+          Text('999,999,999 points available'),
+          const SizedBox(height: 16.0),
           TextFormField(
+            autofocus: true,
             controller: _betAmountController,
             decoration: const InputDecoration(
-              labelText: 'points',
+              border: OutlineInputBorder(),
+              labelText: 'Bet amount',
+              suffixText: 'Points',
             ),
             keyboardType: TextInputType.numberWithOptions(decimal: true),
-            textInputAction: TextInputAction.next,
+            maxLines: 1,
+            textInputAction: TextInputAction.done,
             validator: (value) {
               if (value.isEmpty) {
                 return 'Please enter a bet amount';
               }
             },
           ),
+          const SizedBox(height: 16.0),
           RaisedButton(
-            onPressed: _busy ? null : _placeBet,
             child: Text('Place bet'),
+            color: theme.accentColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(64.0),
+            ),
+            onPressed: _busy ? null : _placeBet,
           ),
         ],
       ),
     );
   }
 
-  _placeBet() async {}
+  _placeBet() async {
+    // TODO Show bet dialog
+  }
 }
