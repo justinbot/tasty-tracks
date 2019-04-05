@@ -22,8 +22,9 @@ class TrackBetDetails extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: theme.accentColor, width: 2.0),
+        border: Border.all(color: theme.accentColor, width: 1.0),
         borderRadius: BorderRadius.all(Radius.circular(16.0)),
+        color: theme.canvasColor,
       ),
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -31,15 +32,15 @@ class TrackBetDetails extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Bet placed',
+              'BET PLACED',
               style: theme.textTheme.subtitle,
             ),
-            Divider(height: 24.0),
+            Divider(height: 32.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${numberFormat.format(trackBet.data['amount'])}',
+                  '${numberFormat.format(trackBet.data['amount'])} at 100 popularity',
                   style: theme.textTheme.subhead,
                 ),
                 Text('on ${DateFormat.yMMMd().format(createdTimestamp)}'),
@@ -51,9 +52,15 @@ class TrackBetDetails extends StatelessWidget {
               children: [
                 Text(
                   '${numberFormat.format(trackBet.data['amount'])}',
-                  style: theme.textTheme.headline.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.display1.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.accentColor,
+                  ),
                 ),
-                Text('current value', style: theme.textTheme.body2,),
+                Text(
+                  'current value',
+                  style: theme.textTheme.subhead,
+                ),
               ],
             ),
             const SizedBox(height: 16.0),

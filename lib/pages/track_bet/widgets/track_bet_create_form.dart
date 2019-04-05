@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:tasty_tracks/models/track_bet_model.dart';
+import 'package:tasty_tracks/models/track_watch_model.dart';
 
 class TrackBetCreateForm extends StatefulWidget {
   const TrackBetCreateForm({
@@ -54,14 +55,19 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
           const SizedBox(height: 16.0),
           ScopedModelDescendant<TrackBetModel>(
             builder: (context, child, trackBetModel) {
-              return RaisedButton(
-                child: Text('Place bet'),
-                color: theme.accentColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(64.0),
-                ),
-                onPressed:
-                    _busy ? null : () => _placeBet(context, trackBetModel),
+              return ScopedModelDescendant<TrackWatchModel>(
+                builder: (context, child, trackWatchModel) {
+                  return RaisedButton(
+                    child: Text('Place bet'),
+                    color: theme.accentColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(64.0),
+                    ),
+                    onPressed: _busy ? null : () {
+                      _placeBet(context, trackBetModel, trackWatchModel)
+                    },
+                  );
+                },
               );
             },
           ),
@@ -70,7 +76,8 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
     );
   }
 
-  _placeBet(BuildContext context, TrackBetModel trackBetModel) async {
+  _placeBet(BuildContext context, TrackBetModel trackBetModel,
+      TrackWatchModel trackWatchModel) async {
     // Dismiss keyboard
     FocusScope.of(context).requestFocus(FocusNode());
 
@@ -85,6 +92,12 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
     setState(() {
       _busy = true;
     });
+
+    // Remove any watch
+    DocumentSnapshot watch = await trackWatchModel.get(widget.trackId);
+    if (watch != null) {
+      watch.reference.delete();
+    }
 
     DocumentReference bet = await trackBetModel.add(widget.trackId, betAmount);
     if (bet == null) {

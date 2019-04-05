@@ -99,70 +99,72 @@ class _TrackPageState extends State<TrackPage> {
         ],
       );
 
-      Widget buttons = Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          ScopedModelDescendant<TrackBetModel>(
-            rebuildOnChange: false,
-            builder: (context, child, trackBetModel) {
-              return StreamBuilder(
-                stream: trackBetModel.snapshots(trackId: _track.id),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData && snapshot.data.documents.isNotEmpty) {
-                    DocumentSnapshot trackBet = snapshot.data.documents.first;
-                    return TrackBetDetails(
-                      trackBet: trackBet,
-                      onPressed: () => _cancelBet(context, trackBetModel),
-                    );
-                  } else {
-                    return RaisedButton(
+      Widget buttons = ScopedModelDescendant<TrackBetModel>(
+        rebuildOnChange: false,
+        builder: (context, child, trackBetModel) {
+          return StreamBuilder(
+            stream: trackBetModel.snapshots(trackId: _track.id),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasData && snapshot.data.documents.isNotEmpty) {
+                DocumentSnapshot trackBet = snapshot.data.documents.first;
+                return TrackBetDetails(
+                  trackBet: trackBet,
+                  onPressed: () => _cancelBet(context, trackBetModel),
+                );
+              } else {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    RaisedButton(
                       child: Text('Place bet...'),
                       color: theme.accentColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(64.0),
                       ),
-                      // TODO Show bet dialog
                       onPressed: () => _placeBet(context),
-                    );
-                  }
-                },
-              );
+                    ),
+                    const SizedBox(height: 8.0),
+                    ScopedModelDescendant<TrackWatchModel>(
+                      rebuildOnChange: false,
+                      builder: (context, child, trackWatchModel) {
+                        return StreamBuilder(
+                          stream: trackWatchModel.snapshots(trackId: _track.id),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.hasData &&
+                                snapshot.data.documents.isNotEmpty) {
+                              return OutlineButton(
+                                child: Text('Remove watch'),
+                                highlightedBorderColor: theme.accentColor,
+                                splashColor: theme.accentColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(64.0),
+                                ),
+                                onPressed: () =>
+                                    trackWatchModel.remove(_track.id),
+                              );
+                            } else {
+                              return OutlineButton(
+                                child: Text('Watch'),
+                                highlightedBorderColor: theme.accentColor,
+                                splashColor: theme.accentColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(64.0),
+                                ),
+                                onPressed: () => trackWatchModel.add(_track.id),
+                              );
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                );
+              }
             },
-          ),
-          ScopedModelDescendant<TrackWatchModel>(
-            rebuildOnChange: false,
-            builder: (context, child, trackWatchModel) {
-              return StreamBuilder(
-                stream: trackWatchModel.snapshots(trackId: _track.id),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData && snapshot.data.documents.isNotEmpty) {
-                    return OutlineButton(
-                      child: Text('Remove watch'),
-                      highlightedBorderColor: theme.accentColor,
-                      splashColor: theme.accentColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(64.0),
-                      ),
-                      onPressed: () => trackWatchModel.remove(_track.id),
-                    );
-                  } else {
-                    return OutlineButton(
-                      child: Text('Watch'),
-                      highlightedBorderColor: theme.accentColor,
-                      splashColor: theme.accentColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(64.0),
-                      ),
-                      onPressed: () => trackWatchModel.add(_track.id),
-                    );
-                  }
-                },
-              );
-            },
-          ),
-        ],
+          );
+        },
       );
 
       Widget previewPlayer = TrackPreviewPlayer(previewUrl: _track.previewUrl);
@@ -282,8 +284,8 @@ class _TrackPageState extends State<TrackPage> {
 
     setState(() {
       _isBusy = false;
-      _trackBetModel = trackBet;
       _trackWatchModel = trackWatch;
+      _trackBetModel = trackBet;
       _track = track;
       _album = album;
       _palette = palette;
