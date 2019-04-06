@@ -58,7 +58,7 @@ class UserProfileModel extends Model {
     }
   }
 
-  Future<DocumentReference> set({String username, double points}) async {
+  Future<DocumentReference> update({String username, double points}) async {
     QuerySnapshot query = await _firestore
         .collection(collectionPath)
         .where('user_id', isEqualTo: user.uid)

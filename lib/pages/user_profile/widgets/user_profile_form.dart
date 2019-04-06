@@ -13,8 +13,7 @@ class CreateUserProfileForm extends StatefulWidget {
   }
 }
 
-class CreateUserProfileFormState
-    extends State<CreateUserProfileForm> {
+class CreateUserProfileFormState extends State<CreateUserProfileForm> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   bool _busy = false;
@@ -62,14 +61,22 @@ class CreateUserProfileFormState
 
     UserProfileModel userProfileModel = UserProfileModel(user: user);
 
-    DocumentReference userProfile = await userProfileModel.create(username);
+    DocumentSnapshot userProfile = await userProfileModel.get();
+    DocumentReference newProfile;
+    if (userProfile == null) {
+      // Create new profile
+      newProfile = await userProfileModel.create(username);
+    } else {
+      // Update existing profile
+      newProfile = await userProfileModel.update(username: username);
+    }
 
     setState(() {
       _busy = false;
     });
 
-    if (userProfile == null) {
-      String errorMessage = 'Failed to create profile';
+    if (newProfile == null) {
+      String errorMessage = 'Failed to save profile';
       Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
     }
   }

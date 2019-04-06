@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:tasty_tracks/models/user_profile_model.dart';
 import 'package:tasty_tracks/pages/auth/landing.dart';
-import 'package:tasty_tracks/pages/user_profile/widgets/create_user_profile_form.dart';
+import 'package:tasty_tracks/pages/user_profile/widgets/user_profile_form.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 

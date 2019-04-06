@@ -3,11 +3,9 @@ import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
 import 'package:tasty_tracks/pages/portfolio/portfolio.dart';
 import 'package:tasty_tracks/pages/search/search.dart';
-import 'package:tasty_tracks/pages/settings/settings.dart';
 
 class NavigationPage extends StatefulWidget {
   static final String routeName = '/nav';
-  final String pageTitle = 'Home';
 
   @override
   _NavigationPageState createState() => _NavigationPageState();

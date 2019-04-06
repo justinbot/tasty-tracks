@@ -52,12 +52,10 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  _signOutUser() {
+  _signOutUser() async {
     // TODO Clear search history
-    _auth.signOut().then((_) {
-      Navigator.of(context).pushReplacementNamed(LandingPage.routeName);
-    }).catchError((e) {
-      // TODO Display error
-    });
+    await _auth.signOut();
+    // TODO Bug allows user to navigate back after signing out
+    Navigator.of(context).pushReplacementNamed(LandingPage.routeName);
   }
 }
