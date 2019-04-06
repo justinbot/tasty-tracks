@@ -1,4 +1,3 @@
-import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -15,7 +14,6 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class PortfolioPage extends StatefulWidget {
   static final String routeName = '/home';
-  final String pageTitle = 'Home';
 
   @override
   _PortfolioPageState createState() => _PortfolioPageState();
@@ -33,35 +31,6 @@ class _PortfolioPageState extends State<PortfolioPage> {
     super.initState();
 
     _loadData();
-  }
-
-  _loadData() async {
-    setState(() {
-      _isBusy = true;
-      _hasError = false;
-    });
-
-    TrackWatchModel trackWatchModel;
-    TrackBetModel trackBetModel;
-    UserProfileModel userProfileModel;
-    try {
-      FirebaseUser user = await _auth.currentUser();
-      trackWatchModel = TrackWatchModel(user: user);
-      trackBetModel = TrackBetModel(user: user);
-      userProfileModel = UserProfileModel(user: user);
-    } catch (e) {
-      // TODO Log to error reporting
-      setState(() {
-        _hasError = true;
-      });
-    }
-
-    setState(() {
-      _isBusy = false;
-      _trackWatchModel = trackWatchModel;
-      _trackBetModel = trackBetModel;
-      _userProfileModel = userProfileModel;
-    });
   }
 
   @override
@@ -101,5 +70,34 @@ class _PortfolioPageState extends State<PortfolioPage> {
         ),
       );
     }
+  }
+
+  _loadData() async {
+    setState(() {
+      _isBusy = true;
+      _hasError = false;
+    });
+
+    TrackWatchModel trackWatchModel;
+    TrackBetModel trackBetModel;
+    UserProfileModel userProfileModel;
+    try {
+      FirebaseUser user = await _auth.currentUser();
+      trackWatchModel = TrackWatchModel(user: user);
+      trackBetModel = TrackBetModel(user: user);
+      userProfileModel = UserProfileModel(user: user);
+    } catch (e) {
+      // TODO Log to error reporting
+      setState(() {
+        _hasError = true;
+      });
+    }
+
+    setState(() {
+      _isBusy = false;
+      _trackWatchModel = trackWatchModel;
+      _trackBetModel = trackBetModel;
+      _userProfileModel = userProfileModel;
+    });
   }
 }

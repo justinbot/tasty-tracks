@@ -18,7 +18,7 @@ class _NavigationPageState extends State<NavigationPage> {
   final _pages = <Widget>[
     PortfolioPage(),
     SearchPage(),
-    SettingsPage(),
+    Text('TODO Leaderboard'),
   ];
 
   @override
@@ -34,8 +34,8 @@ class _NavigationPageState extends State<NavigationPage> {
         title: Text('Search'),
       ),
       BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.settings),
-        title: Text('Settings'),
+        icon: Icon(FeatherIcons.award),
+        title: Text('Leaderboard'),
       ),
     ];
 

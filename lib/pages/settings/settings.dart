@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:tasty_tracks/pages/auth/landing.dart';
+
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class SettingsPage extends StatefulWidget {
   static final String routeName = '/settings';
-  final String pageTitle = 'Settings';
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -28,17 +29,12 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
-  _signOutUser() {
-    _auth.signOut().then((_) {
-      Navigator.of(context).pushReplacementNamed('/');
-    }).catchError((e) {
-      // TODO Display error
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Settings'),
+      ),
       body: SafeArea(
         child: Center(
           child: Column(
@@ -54,5 +50,14 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
     );
+  }
+
+  _signOutUser() {
+    // TODO Clear search history
+    _auth.signOut().then((_) {
+      Navigator.of(context).pushReplacementNamed(LandingPage.routeName);
+    }).catchError((e) {
+      // TODO Display error
+    });
   }
 }
