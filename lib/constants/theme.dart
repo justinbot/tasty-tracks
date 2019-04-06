@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 ThemeData _buildTastyTracksTheme() {
   final Color primaryColor = Colors.blueGrey[900];
-  final Color secondaryColor = Colors.deepPurpleAccent;
+  final Color secondaryColor = Colors.greenAccent[100];
   final ColorScheme colorScheme = ColorScheme.dark().copyWith(
     primary: primaryColor,
     secondary: secondaryColor,
