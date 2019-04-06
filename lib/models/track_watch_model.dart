@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
 final Firestore _firestore = Firestore.instance;
 
 class TrackWatchModel extends Model {
@@ -57,7 +56,6 @@ class TrackWatchModel extends Model {
   }
 
   Future<DocumentReference> add(String trackId) async {
-    FirebaseUser user = await _auth.currentUser();
     // TODO Run query and write in same transaction
     QuerySnapshot query = await collection()
         .where('user_id', isEqualTo: user.uid)

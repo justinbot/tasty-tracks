@@ -63,6 +63,7 @@ flutter:
   assets:
    - assets/album_image_placeholder.png
    - assets/artist_image_placeholder.png
+   - assets/tasty_tracks_logo_outline_1200.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
