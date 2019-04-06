@@ -55,7 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
   _signOutUser() async {
     // TODO Clear search history
     await _auth.signOut();
-    // TODO Bug allows user to navigate back after signing out
-    Navigator.of(context).pushReplacementNamed(LandingPage.routeName);
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        LandingPage.routeName, (Route<dynamic> route) => false);
   }
 }

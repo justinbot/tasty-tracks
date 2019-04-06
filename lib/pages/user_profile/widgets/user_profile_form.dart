@@ -7,6 +7,13 @@ import 'package:tasty_tracks/models/user_profile_model.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class CreateUserProfileForm extends StatefulWidget {
+  const CreateUserProfileForm({
+    Key key,
+    this.onSaved,
+  }) : super(key: key);
+
+  final onSaved;
+
   @override
   CreateUserProfileFormState createState() {
     return CreateUserProfileFormState();
@@ -47,6 +54,9 @@ class CreateUserProfileFormState extends State<CreateUserProfileForm> {
   }
 
   _createUserProfile() async {
+    // Dismiss keyboard
+    FocusScope.of(context).requestFocus(FocusNode());
+
     bool valid = _formKey.currentState.validate();
     if (!valid) {
       return;
@@ -78,6 +88,10 @@ class CreateUserProfileFormState extends State<CreateUserProfileForm> {
     if (newProfile == null) {
       String errorMessage = 'Failed to save profile';
       Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+    } else {
+      if (widget.onSaved != null) {
+        widget.onSaved();
+      }
     }
   }
 }

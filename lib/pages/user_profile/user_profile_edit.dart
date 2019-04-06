@@ -29,7 +29,11 @@ class _UserProfileEditPageState extends State<UserProfileEditPage> {
           padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 32.0),
           child: Column(
             children: [
-              CreateUserProfileForm(),
+              CreateUserProfileForm(
+                onSaved: () {
+                  Navigator.of(context).pop();
+                },
+              ),
             ],
           ),
         ),
