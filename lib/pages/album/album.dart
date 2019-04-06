@@ -4,7 +4,7 @@ import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/pages/album/widgets/album_details.dart';
 import 'package:tasty_tracks/spotify_api.dart';
-import 'package:tasty_tracks/widgets/error_message.dart';
+import 'package:tasty_tracks/widgets/error_page.dart';
 
 class AlbumPage extends StatefulWidget {
   const AlbumPage({
@@ -12,7 +12,7 @@ class AlbumPage extends StatefulWidget {
     this.albumId,
   }) : super(key: key);
 
-  static final String routeName = '/album-details';
+  static const String routeName = '/album-details';
   final String albumId;
 
   @override
@@ -38,7 +38,7 @@ class _AlbumPageState extends State<AlbumPage> {
     if (_hasError) {
       return Scaffold(
         body: SafeArea(
-          child: ErrorMessage(
+          child: ErrorPage(
             errorText: 'Failed to load album :(',
             onRetry: () => _loadData(),
           ),

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -80,25 +79,41 @@ class _SearchPageState extends State<SearchPage> {
       // Navigate to details page for selected item
       if (selectedItem is spotify.AlbumSimple) {
         history.addAlbum(selectedItem);
-        Navigator.of(context)
-            .pushNamed(AlbumPage.routeName + ':${selectedItem.id}');
+        Navigator.of(context).pushNamed(
+          AlbumPage.routeName,
+          arguments: {
+            'album_id': selectedItem.id,
+            'hero_suffix': '${selectedItem.id}-search',
+          },
+        );
       } else if (selectedItem is spotify.ArtistSimple) {
         history.addArtist(selectedItem);
-        Navigator.of(context)
-            .pushNamed(ArtistPage.routeName + ':${selectedItem.id}');
+        Navigator.of(context).pushNamed(
+          ArtistPage.routeName,
+          arguments: {
+            'artist_id': selectedItem.id,
+            'hero_suffix': '${selectedItem.id}-search',
+          },
+        );
       } else if (selectedItem is spotify.Track) {
         history.addTrack(selectedItem);
         if (selectedItem.album.images.isNotEmpty) {
-          String trackImageUrl = selectedItem.album.images.first.url;
-          // Encode the URL
-          String encodedTrackImageUrl = utf8.fuse(base64Url).encode(trackImageUrl);
-
-          Navigator.of(context).pushNamed(TrackPage.routeName +
-              ':${selectedItem.id}' +
-              ':${encodedTrackImageUrl}');
+          Navigator.of(context).pushNamed(
+            TrackPage.routeName,
+            arguments: {
+              'track_id': selectedItem.id,
+              'track_image_url': selectedItem.album.images.first.url,
+              'hero_suffix': '${selectedItem.id}-search',
+            },
+          );
         } else {
-          Navigator.of(context)
-              .pushNamed(TrackPage.routeName + ':${selectedItem.id}');
+          Navigator.of(context).pushNamed(
+            TrackPage.routeName,
+            arguments: {
+              'track_id': selectedItem.id,
+              'hero_suffix': '${selectedItem.id}-search',
+            },
+          );
         }
       }
     }

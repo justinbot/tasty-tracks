@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ErrorMessage extends StatelessWidget {
-  const ErrorMessage({
+class ErrorPage extends StatelessWidget {
+  const ErrorPage({
     Key key,
     this.errorText,
     this.onRetry,

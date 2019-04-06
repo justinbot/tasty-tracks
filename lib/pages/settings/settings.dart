@@ -30,10 +30,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   _signOutUser() {
     _auth.signOut().then((_) {
-      Navigator.pushReplacementNamed(context, '/');
+      Navigator.of(context).pushReplacementNamed('/');
     }).catchError((e) {
       // TODO Display error
-      print(e);
     });
   }
 

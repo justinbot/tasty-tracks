@@ -1,9 +1,7 @@
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
-import 'package:tasty_tracks/models/search_history_model.dart';
 import 'package:tasty_tracks/pages/search/widgets/search_results.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 
