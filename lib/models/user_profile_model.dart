@@ -20,17 +20,12 @@ class UserProfileModel extends Model {
   }
 
   /// Note: ScopedModelDescendants should use rebuildOnChange=false with streams.
-  Stream<QuerySnapshot> snapshots({String trackId}) {
+  Stream<QuerySnapshot> snapshots() {
     Query query = collection().where('user_id', isEqualTo: user.uid);
-
-    if (trackId != null) {
-      query = query.where('track_id', isEqualTo: trackId);
-    }
-
     return query.snapshots();
   }
 
-  Future<DocumentReference> add(String username) async {
+  Future<DocumentReference> create(String username) async {
     // TODO Run query and write in same transaction
     QuerySnapshot query =
         await collection().where('user_id', isEqualTo: user.uid).getDocuments();

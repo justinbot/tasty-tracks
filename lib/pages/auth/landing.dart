@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tasty_tracks/models/user_profile_model.dart';
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
 import 'package:tasty_tracks/pages/navigation.dart';
+import 'package:tasty_tracks/pages/user_profile/onboard.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -29,9 +30,7 @@ class _LandingPageState extends State<LandingPage> {
         userProfileModel.get().then((userProfile) {
           if (userProfile == null) {
             // Take to on-boarding if no user profile
-            // TODO
-            Navigator.of(context)
-                .pushReplacementNamed(NavigationPage.routeName);
+            Navigator.of(context).pushReplacementNamed(OnboardPage.routeName);
           } else {
             Navigator.of(context)
                 .pushReplacementNamed(NavigationPage.routeName);
@@ -59,10 +58,13 @@ class _LandingPageState extends State<LandingPage> {
       backgroundColor: theme.canvasColor,
       body: Container(
         child: Center(
-          child: Image.asset(
-            'assets/tasty_tracks_logo_outline_1200.png',
-            color: theme.accentColor,
-            width: 256.0,
+          child: Hero(
+            tag: 'logoHero',
+            child: Image.asset(
+              'assets/tasty_tracks_logo_outline_1200.png',
+              color: theme.accentColor,
+              width: 256.0,
+            ),
           ),
         ),
       ),
