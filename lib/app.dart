@@ -11,6 +11,7 @@ import 'package:tasty_tracks/pages/settings/settings.dart';
 import 'package:tasty_tracks/pages/track/track.dart';
 import 'package:tasty_tracks/pages/track_bet/track_bet_create.dart';
 import 'package:tasty_tracks/pages/user_profile/onboard.dart';
+import 'package:tasty_tracks/pages/user_profile/user_profile_edit.dart';
 
 class TastyTracksApp extends StatelessWidget {
   @override
@@ -26,6 +27,8 @@ class TastyTracksApp extends StatelessWidget {
         SettingsPage.routeName: (BuildContext context) => SettingsPage(),
         SignInPage.routeName: (BuildContext context) => SignInPage(),
         SignUpPage.routeName: (BuildContext context) => SignUpPage(),
+        UserProfileEditPage.routeName: (BuildContext context) =>
+            UserProfileEditPage(),
       },
       onUnknownRoute: _onUnknownRoute,
     );

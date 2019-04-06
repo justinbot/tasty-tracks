@@ -11,8 +11,6 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 class OnboardPage extends StatefulWidget {
   static final String routeName = '/onboard';
 
-  // TODO Navigate on not-null user profile
-
   @override
   _OnboardPageState createState() => _OnboardPageState();
 }
@@ -22,7 +20,7 @@ class _OnboardPageState extends State<OnboardPage> {
   void initState() {
     super.initState();
 
-    // Navigate once signed in
+    // Navigate once profile is created
     _auth.currentUser().then((user) {
       UserProfileModel(user: user)
           .snapshots()

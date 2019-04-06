@@ -42,7 +42,7 @@ class CreateUserProfileFormState
             const SizedBox(height: 16.0),
             RaisedButton(
                 onPressed: _busy ? null : _createUserProfile,
-                child: Text('Save')),
+                child: Text('Save profile')),
           ],
         ));
   }

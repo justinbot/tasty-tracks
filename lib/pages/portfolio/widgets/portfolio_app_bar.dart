@@ -6,6 +6,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import 'package:tasty_tracks/models/user_profile_model.dart';
 import 'package:tasty_tracks/pages/settings/settings.dart';
+import 'package:tasty_tracks/pages/user_profile/user_profile_edit.dart';
 
 enum MenuActions { editProfile, settings }
 
@@ -54,16 +55,18 @@ class PortfolioAppBar extends StatelessWidget implements PreferredSizeWidget {
                 actions: [
                   PopupMenuButton(
                     child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
                             username,
-                            style: theme.textTheme.body2,
+                            style: theme.textTheme.subhead,
                           ),
-                          const SizedBox(width: 8.0),
+                          const SizedBox(width: 12.0),
                           Icon(FeatherIcons.user),
                         ],
                       ),
@@ -71,10 +74,12 @@ class PortfolioAppBar extends StatelessWidget implements PreferredSizeWidget {
                     onSelected: (MenuActions result) {
                       switch (result) {
                         case MenuActions.editProfile:
-                          // TODO
+                          Navigator.of(context)
+                              .pushNamed(UserProfileEditPage.routeName);
                           break;
                         case MenuActions.settings:
-                          Navigator.of(context).pushNamed(SettingsPage.routeName);
+                          Navigator.of(context)
+                              .pushNamed(SettingsPage.routeName);
                           break;
                       }
                     },

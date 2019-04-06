@@ -16,7 +16,7 @@ class TrackBetDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    DateTime createdTimestamp = trackBet.data['created_timestamp'];
+    DateTime createdTimestamp = trackBet.data['created_timestamp'] ?? DateTime.now();
 
     NumberFormat numberFormat = NumberFormat.currency(symbol: '');
 
