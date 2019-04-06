@@ -36,6 +36,7 @@ class UserProfileModel extends Model {
         'created_timestamp': FieldValue.serverTimestamp(),
         'user_id': user.uid,
         'username': username,
+        'points': 0.0,
       });
       notifyListeners();
       return reference;
