@@ -7,6 +7,7 @@ import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/models/track_watch_model.dart';
+import 'package:tasty_tracks/models/user_profile_model.dart';
 import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
 import 'package:tasty_tracks/pages/track_bet/widgets/track_bet_create_form.dart';
 import 'package:tasty_tracks/pages/track_bet/widgets/track_bet_create_placeholder.dart';
@@ -38,6 +39,7 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
   bool _hasError = false;
   TrackBetModel _trackBetModel;
   TrackWatchModel _trackWatchModel;
+  UserProfileModel _userProfileModel;
   spotify.Track _track;
   spotify.Album _album;
   PaletteGenerator _palette;
@@ -113,66 +115,69 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
         model: _trackBetModel,
         child: ScopedModel<TrackWatchModel>(
           model: _trackWatchModel,
-          child: Theme(
-            data: themeWithPalette(Theme.of(context), _palette),
-            child: Scaffold(
-              appBar: appBar,
-              body: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      theme.accentColor.withOpacity(0.25),
-                      theme.accentColor.withOpacity(0.0)
-                    ],
-                  ),
-                ),
-                child: SafeArea(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 32.0,
-                      vertical: 32.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: albumImage,
-                            ),
-                            SizedBox(width: 32.0),
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  popularity,
-                                  Text(
-                                    _track.name,
-                                    style: theme.textTheme.headline
-                                        .copyWith(fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  const SizedBox(height: 4.0),
-                                  Text(
-                                    artistNames,
-                                    style: theme.textTheme.subhead,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Divider(height: 64.0),
-                        TrackBetCreateForm(
-                          trackId: _track.id,
-                        ),
+          child: ScopedModel<UserProfileModel>(
+            model: _userProfileModel,
+            child: Theme(
+              data: themeWithPalette(Theme.of(context), _palette),
+              child: Scaffold(
+                appBar: appBar,
+                body: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        theme.accentColor.withOpacity(0.25),
+                        theme.accentColor.withOpacity(0.0)
                       ],
+                    ),
+                  ),
+                  child: SafeArea(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 32.0,
+                        vertical: 32.0,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: albumImage,
+                              ),
+                              SizedBox(width: 32.0),
+                              Expanded(
+                                flex: 2,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    popularity,
+                                    Text(
+                                      _track.name,
+                                      style: theme.textTheme.headline.copyWith(
+                                          fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                    const SizedBox(height: 4.0),
+                                    Text(
+                                      artistNames,
+                                      style: theme.textTheme.subhead,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Divider(height: 64.0),
+                          TrackBetCreateForm(
+                            trackId: _track.id,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -190,15 +195,17 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
       _hasError = false;
     });
 
-    TrackWatchModel trackWatch;
-    TrackBetModel trackBet;
+    TrackWatchModel trackWatchModel;
+    TrackBetModel trackBetModel;
+    UserProfileModel userProfileModel;
     spotify.Track track;
     spotify.Album album;
     PaletteGenerator palette;
     try {
       FirebaseUser user = await _auth.currentUser();
-      trackBet = TrackBetModel(user: user);
-      trackWatch = TrackWatchModel(user: user);
+      trackBetModel = TrackBetModel(user: user);
+      trackWatchModel = TrackWatchModel(user: user);
+      userProfileModel = UserProfileModel(user: user);
 
       // Get track
       track = await spotifyApi.tracks.get(widget.trackId);
@@ -222,8 +229,9 @@ class _TrackBetCreateState extends State<TrackBetCreate> {
 
     setState(() {
       _isBusy = false;
-      _trackBetModel = trackBet;
-      _trackWatchModel = trackWatch;
+      _trackBetModel = trackBetModel;
+      _trackWatchModel = trackWatchModel;
+      _userProfileModel = userProfileModel;
       _track = track;
       _album = album;
       _palette = palette;

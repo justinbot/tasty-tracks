@@ -3,11 +3,9 @@ import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
 import 'package:tasty_tracks/pages/portfolio/portfolio.dart';
 import 'package:tasty_tracks/pages/search/search.dart';
-import 'package:tasty_tracks/pages/settings/settings.dart';
 
 class NavigationPage extends StatefulWidget {
   static final String routeName = '/nav';
-  final String pageTitle = 'Home';
 
   @override
   _NavigationPageState createState() => _NavigationPageState();
@@ -18,7 +16,7 @@ class _NavigationPageState extends State<NavigationPage> {
   final _pages = <Widget>[
     PortfolioPage(),
     SearchPage(),
-    SettingsPage(),
+    Text('TODO Leaderboard'),
   ];
 
   @override
@@ -34,8 +32,8 @@ class _NavigationPageState extends State<NavigationPage> {
         title: Text('Search'),
       ),
       BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.settings),
-        title: Text('Settings'),
+        icon: Icon(FeatherIcons.award),
+        title: Text('Leaderboard'),
       ),
     ];
 

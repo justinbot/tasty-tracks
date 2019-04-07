@@ -1,10 +1,11 @@
-import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/models/track_watch_model.dart';
+import 'package:tasty_tracks/models/user_profile_model.dart';
+import 'package:tasty_tracks/pages/portfolio/widgets/portfolio_app_bar.dart';
 import 'package:tasty_tracks/pages/portfolio/widgets/track_bets.dart';
 import 'package:tasty_tracks/pages/portfolio/widgets/track_watches.dart';
 import 'package:tasty_tracks/widgets/error_page.dart';
@@ -13,7 +14,6 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class PortfolioPage extends StatefulWidget {
   static final String routeName = '/home';
-  final String pageTitle = 'Home';
 
   @override
   _PortfolioPageState createState() => _PortfolioPageState();
@@ -24,12 +24,52 @@ class _PortfolioPageState extends State<PortfolioPage> {
   bool _hasError;
   TrackWatchModel _trackWatchModel;
   TrackBetModel _trackBetModel;
+  UserProfileModel _userProfileModel;
 
   @override
   initState() {
     super.initState();
 
     _loadData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_hasError) {
+      return ErrorPage(
+        errorText: 'Failed to load your portfolio :(',
+        onRetry: () => _loadData(),
+      );
+    } else if (_isBusy) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: CircularProgressIndicator(),
+      );
+    } else {
+      return DefaultTabController(
+        length: 3,
+        child: ScopedModel<UserProfileModel>(
+          model: _userProfileModel,
+          child: Scaffold(
+            appBar: PortfolioAppBar(),
+            body: TabBarView(
+              physics: NeverScrollableScrollPhysics(),
+              children: [
+                ScopedModel<TrackBetModel>(
+                  model: _trackBetModel,
+                  child: TrackBets(),
+                ),
+                ScopedModel<TrackWatchModel>(
+                  model: _trackWatchModel,
+                  child: TrackWatches(),
+                ),
+                Text('History'),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   _loadData() async {
@@ -40,10 +80,12 @@ class _PortfolioPageState extends State<PortfolioPage> {
 
     TrackWatchModel trackWatchModel;
     TrackBetModel trackBetModel;
+    UserProfileModel userProfileModel;
     try {
       FirebaseUser user = await _auth.currentUser();
       trackWatchModel = TrackWatchModel(user: user);
       trackBetModel = TrackBetModel(user: user);
+      userProfileModel = UserProfileModel(user: user);
     } catch (e) {
       // TODO Log to error reporting
       setState(() {
@@ -55,67 +97,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
       _isBusy = false;
       _trackWatchModel = trackWatchModel;
       _trackBetModel = trackBetModel;
+      _userProfileModel = userProfileModel;
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
-
-    Widget body;
-    if (_hasError) {
-      body = ErrorPage(
-        errorText: 'Failed to load your home page :(',
-        onRetry: () => _loadData(),
-      );
-    } else if (_isBusy) {
-      body = CircularProgressIndicator();
-    } else {
-      body = TabBarView(
-        physics: NeverScrollableScrollPhysics(),
-        children: [
-          ScopedModel<TrackBetModel>(
-            model: _trackBetModel,
-            child: TrackBets(),
-          ),
-          ScopedModel<TrackWatchModel>(
-            model: _trackWatchModel,
-            child: TrackWatches(),
-          ),
-          Text('History'),
-        ],
-      );
-    }
-
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            '999,999.99',
-            style: theme.textTheme.headline.copyWith(color: theme.accentColor),
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(FeatherIcons.moreVertical),
-            ),
-          ],
-          bottom: TabBar(
-            tabs: [
-              Tab(
-                text: 'Bets',
-              ),
-              Tab(
-                text: 'Watching',
-              ),
-              Tab(
-                text: 'History',
-              ),
-            ],
-          ),
-        ),
-        body: body,
-      ),
-    );
   }
 }

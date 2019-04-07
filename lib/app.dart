@@ -7,8 +7,11 @@ import 'package:tasty_tracks/pages/auth/landing.dart';
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
 import 'package:tasty_tracks/pages/auth/sign_up.dart';
 import 'package:tasty_tracks/pages/navigation.dart';
+import 'package:tasty_tracks/pages/settings/settings.dart';
 import 'package:tasty_tracks/pages/track/track.dart';
-import 'package:tasty_tracks/pages/track_bet/create.dart';
+import 'package:tasty_tracks/pages/track_bet/track_bet_create.dart';
+import 'package:tasty_tracks/pages/user_profile/onboard.dart';
+import 'package:tasty_tracks/pages/user_profile/user_profile_edit.dart';
 
 class TastyTracksApp extends StatelessWidget {
   @override
@@ -20,8 +23,12 @@ class TastyTracksApp extends StatelessWidget {
       routes: {
         LandingPage.routeName: (BuildContext context) => LandingPage(),
         NavigationPage.routeName: (BuildContext context) => NavigationPage(),
+        OnboardPage.routeName: (BuildContext context) => OnboardPage(),
+        SettingsPage.routeName: (BuildContext context) => SettingsPage(),
         SignInPage.routeName: (BuildContext context) => SignInPage(),
         SignUpPage.routeName: (BuildContext context) => SignUpPage(),
+        UserProfileEditPage.routeName: (BuildContext context) =>
+            UserProfileEditPage(),
       },
       onUnknownRoute: _onUnknownRoute,
     );
@@ -77,8 +84,8 @@ Route<dynamic> _handleRoute(RouteSettings settings) {
       return MaterialPageRoute(
         settings: settings,
         builder: (BuildContext context) => TrackBetCreate(
-          trackId: arguments['track_id'],
-        ),
+              trackId: arguments['track_id'],
+            ),
       );
 
     default:
