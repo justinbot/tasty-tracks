@@ -42,13 +42,13 @@ class PortfolioAppBar extends StatelessWidget implements PreferredSizeWidget {
               DocumentSnapshot userProfile = snapshot.data.documents.first;
 
               String username = userProfile.data['username'];
-              double points = userProfile.data['points'].toDouble();
+              double balance = userProfile.data['balance'].toDouble();
 
               NumberFormat numberFormat = NumberFormat.currency(symbol: '');
 
               return AppBar(
                 title: Text(
-                  numberFormat.format(points),
+                  numberFormat.format(balance),
                   style: theme.textTheme.headline
                       .copyWith(color: theme.accentColor),
                 ),

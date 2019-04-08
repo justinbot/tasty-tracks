@@ -40,7 +40,7 @@ class TrackBetDetails extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${numberFormat.format(trackBet.data['amount'])} at 100 popularity',
+                  '${numberFormat.format(trackBet.data['initial_wager'])} at 100 popularity',
                   style: theme.textTheme.subhead,
                 ),
                 Text('on ${DateFormat.yMMMd().format(createdTimestamp)}'),
@@ -51,7 +51,8 @@ class TrackBetDetails extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${numberFormat.format(trackBet.data['amount'])}',
+                  // TODO current value
+                  '${numberFormat.format(trackBet.data['initial_wager'])}',
                   style: theme.textTheme.display1.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.accentColor,
