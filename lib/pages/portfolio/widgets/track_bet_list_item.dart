@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
@@ -29,8 +30,10 @@ class TrackBetListItem extends StatelessWidget {
         trackBet.data['created_timestamp'] ?? DateTime.now();
     double initialWager = trackBet.data['initial_wager'];
     int initialPopularity = trackBet.data['initial_popularity'];
-    double outcome = initialWager;
     int popularity = track.popularity;
+    // TODO Temporary outcome calculation
+    double outcome = (popularity / initialPopularity) * initialWager;
+    double change = outcome - initialWager;
 
     NumberFormat numberFormat = NumberFormat.currency(symbol: '');
 
@@ -54,6 +57,7 @@ class TrackBetListItem extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text('${numberFormat.format(initialWager)}'),
               Text('placed ${DateFormat.yMMMd().format(createdTimestamp)}'),
@@ -61,10 +65,17 @@ class TrackBetListItem extends StatelessWidget {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                numberFormat.format(outcome),
-                style: theme.textTheme.title,
+              Row(
+                children: [
+                  Icon(FeatherIcons.star, size: 18.0),
+                  const SizedBox(width: 4.0),
+                  Text(
+                    numberFormat.format(outcome),
+                    style: theme.textTheme.title,
+                  ),
+                ],
               ),
               Text(
                 '${popularity} popularity',
@@ -120,5 +131,4 @@ class TrackBetListItem extends StatelessWidget {
       },
     );
   }
-
 }

@@ -110,6 +110,7 @@ class _TrackPageState extends State<TrackPage> {
                 DocumentSnapshot trackBet = snapshot.data.documents.first;
                 return TrackBetDetails(
                   trackBet: trackBet,
+                  track: _track,
                   onPressed: () => _cancelBet(context, trackBetModel),
                 );
               } else {
