@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -16,9 +17,11 @@ class TrackBetDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    DateTime createdTimestamp = trackBet.data['created_timestamp'] ?? DateTime.now();
+    DateTime createdTimestamp =
+        trackBet.data['created_timestamp'] ?? DateTime.now();
     double initialWager = trackBet.data['initial_wager'];
     int initialPopularity = trackBet.data['initial_popularity'];
+    double outcome = trackBet.data['initial_wager']; // TODO
 
     NumberFormat numberFormat = NumberFormat.currency(symbol: '');
 
@@ -52,13 +55,22 @@ class TrackBetDetails extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  // TODO current value
-                  '${numberFormat.format(trackBet.data['initial_wager'])}',
-                  style: theme.textTheme.display1.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.accentColor,
-                  ),
+                Row(
+                  children: [
+                    Icon(
+                      FeatherIcons.star,
+                      size: 32.0,
+                      color: theme.accentColor,
+                    ),
+                    const SizedBox(width: 4.0),
+                    Text(
+                      '${numberFormat.format(outcome)}',
+                      style: theme.textTheme.display1.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.accentColor,
+                      ),
+                    ),
+                  ],
                 ),
                 Text(
                   'current value',

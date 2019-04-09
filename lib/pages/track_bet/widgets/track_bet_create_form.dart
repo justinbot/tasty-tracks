@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -37,7 +38,10 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
+                  Icon(FeatherIcons.star),
+                  const SizedBox(width: 4.0),
                   StreamBuilder(
                     stream: userProfileModel.snapshots(),
                     builder: (BuildContext context,
@@ -63,7 +67,7 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
                     },
                   ),
                   const SizedBox(width: 8.0),
-                  Text('points available'),
+                  Text('available'),
                 ],
               ),
               const SizedBox(height: 16.0),
@@ -73,7 +77,7 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Bet amount',
-                  suffixText: 'Points',
+                  suffixIcon: Icon(FeatherIcons.star),
                 ),
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 maxLines: 1,

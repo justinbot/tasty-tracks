@@ -47,11 +47,15 @@ class PortfolioAppBar extends StatelessWidget implements PreferredSizeWidget {
               NumberFormat numberFormat = NumberFormat.currency(symbol: '');
 
               return AppBar(
-                title: Text(
-                  numberFormat.format(balance),
-                  style: theme.textTheme.headline
-                      .copyWith(color: theme.accentColor),
-                ),
+                title: Row(children: [
+                  Icon(FeatherIcons.star, color: theme.accentColor),
+                  const SizedBox(width: 8.0),
+                  Text(
+                    numberFormat.format(balance),
+                    style: theme.textTheme.headline
+                        .copyWith(color: theme.accentColor),
+                  ),
+                ]),
                 actions: [
                   PopupMenuButton(
                     child: Padding(
