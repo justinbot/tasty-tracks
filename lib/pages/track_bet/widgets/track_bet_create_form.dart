@@ -130,7 +130,6 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
       return;
     }
 
-    // TODO
     double wager = double.parse(_wagerController.text);
 
     setState(() {

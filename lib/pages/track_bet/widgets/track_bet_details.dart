@@ -17,6 +17,8 @@ class TrackBetDetails extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     DateTime createdTimestamp = trackBet.data['created_timestamp'] ?? DateTime.now();
+    double initialWager = trackBet.data['initial_wager'];
+    int initialPopularity = trackBet.data['initial_popularity'];
 
     NumberFormat numberFormat = NumberFormat.currency(symbol: '');
 
@@ -40,7 +42,7 @@ class TrackBetDetails extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${numberFormat.format(trackBet.data['initial_wager'])} at 100 popularity',
+                  '${numberFormat.format(initialWager)} at ${initialPopularity} popularity',
                   style: theme.textTheme.subhead,
                 ),
                 Text('on ${DateFormat.yMMMd().format(createdTimestamp)}'),
