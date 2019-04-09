@@ -195,7 +195,7 @@ class _TrackPageState extends State<TrackPage> {
         child: ScopedModel<TrackWatchModel>(
           model: _trackWatchModel,
           child: Theme(
-            data: themeWithPalette(Theme.of(context), _palette),
+            data: theme,
             child: Scaffold(
               appBar: TrackAppBar(
                 track: _track,
@@ -221,20 +221,24 @@ class _TrackPageState extends State<TrackPage> {
                     children: [
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 32.0),
-                        child: albumImage,
+                        child: AspectRatio(
+                          aspectRatio: 1.0,
+                          child: albumImage,
+                        ),
                       ),
-                      const SizedBox(height: 16.0),
+                      const SizedBox(height: 8.0),
                       TrackDetails(
                         track: _track,
                         album: _album,
                         center: true,
                       ),
+                      const SizedBox(height: 8.0),
                       popularity,
                       const SizedBox(height: 8.0),
                       buttons,
                       const SizedBox(height: 8.0),
                       previewPlayer,
-                      const SizedBox(height: 16.0),
+                      const Divider(height: 24.0),
                       credits,
                     ],
                   ),
