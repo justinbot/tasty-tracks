@@ -55,7 +55,8 @@ class TrackBetModel extends Model {
     return query.getDocuments();
   }
 
-  Future<DocumentReference> add(String trackId, double amount) async {
+  Future<DocumentReference> add(
+      {String trackId, double wager, int popularity}) async {
     // TODO This should be a call to a cloud function rather than direct write.
     // TODO Run query and write in same transaction
     QuerySnapshot query = await collection()
@@ -66,10 +67,11 @@ class TrackBetModel extends Model {
     if (query.documents.isEmpty) {
       // Return reference to the newly added bet
       DocumentReference reference = await collection().add({
+        'user_id': user.uid,
         'created_timestamp': FieldValue.serverTimestamp(),
         'track_id': trackId,
-        'user_id': user.uid,
-        'amount': amount,
+        'initial_wager': wager,
+        'initial_popularity': popularity,
       });
       notifyListeners();
       return reference;
@@ -79,6 +81,7 @@ class TrackBetModel extends Model {
   }
 
   Future<void> remove(String trackId) async {
+    // TODO This should be a call to a cloud function rather than direct write.
     // TODO Run query and write in same transaction
     QuerySnapshot query = await collection()
         .where('user_id', isEqualTo: user.uid)

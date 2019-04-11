@@ -25,15 +25,22 @@ class TrackBets extends StatelessWidget {
               AsyncSnapshot<Map<DocumentSnapshot, spotify.Track>> snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data.isNotEmpty) {
-                // TODO Calculate change over past day
-                // Percent or value?
                 Iterable<DocumentSnapshot> bets = snapshot.data.keys;
+
+                double change = bets.fold(0, (prev, element) {
+                  spotify.Track track = snapshot.data[element];
+                  double initialWager = element.data['initial_wager'];
+                  int initialPopularity = element.data['initial_popularity'];
+                  int popularity = track.popularity;
+                  // TODO Temporary outcome calculation
+                  double outcome = (popularity / initialPopularity) * initialWager;
+                  return prev + (outcome - initialWager);
+                });
 
                 return Column(
                   children: [
                     TrackBetsHeader(
-                      // TODO
-                      change: 1234.0,
+                      change: change,
                       updated: DateTime.now(),
                     ),
                     Expanded(

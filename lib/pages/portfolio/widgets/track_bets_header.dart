@@ -1,5 +1,6 @@
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class TrackBetsHeader extends StatelessWidget {
@@ -15,6 +16,8 @@ class TrackBetsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+
+    NumberFormat numberFormat = NumberFormat.currency(symbol: '');
 
     Icon changeIcon;
     if (change > 0.0) {
@@ -46,7 +49,7 @@ class TrackBetsHeader extends StatelessWidget {
                   changeIcon,
                   const SizedBox(width: 12.0),
                   Text(
-                    change.toString(),
+                    numberFormat.format(change),
                     style: theme.textTheme.title,
                   ),
                 ],

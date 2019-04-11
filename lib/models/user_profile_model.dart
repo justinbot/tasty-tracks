@@ -36,7 +36,7 @@ class UserProfileModel extends Model {
         'created_timestamp': FieldValue.serverTimestamp(),
         'user_id': user.uid,
         'username': username,
-        'points': 0.0,
+        'balance': 0.0,
       });
       notifyListeners();
       return reference;
@@ -58,7 +58,7 @@ class UserProfileModel extends Model {
     }
   }
 
-  Future<DocumentReference> update({String username, double points}) async {
+  Future<DocumentReference> update({String username, double balance}) async {
     QuerySnapshot query = await _firestore
         .collection(collectionPath)
         .where('user_id', isEqualTo: user.uid)
@@ -74,8 +74,8 @@ class UserProfileModel extends Model {
       if (username != null) {
         update['username'] = username;
       }
-      if (points != null) {
-        update['points'] = points;
+      if (balance != null) {
+        update['balance'] = balance;
       }
 
       await userProfile.reference.updateData(update);

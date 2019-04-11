@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:spotify/spotify_io.dart' as spotify;
 
 import 'package:tasty_tracks/models/track_bet_model.dart';
 import 'package:tasty_tracks/models/track_watch_model.dart';
@@ -10,10 +12,10 @@ import 'package:tasty_tracks/models/user_profile_model.dart';
 class TrackBetCreateForm extends StatefulWidget {
   const TrackBetCreateForm({
     Key key,
-    this.trackId,
+    this.track,
   }) : super(key: key);
 
-  final String trackId;
+  final spotify.Track track;
 
   @override
   _TrackBetCreateFormState createState() => _TrackBetCreateFormState();
@@ -21,7 +23,7 @@ class TrackBetCreateForm extends StatefulWidget {
 
 class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
   final _formKey = GlobalKey<FormState>();
-  final _betAmountController = TextEditingController();
+  final _wagerController = TextEditingController();
   bool _busy = false;
 
   @override
@@ -36,43 +38,46 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
+                  Icon(FeatherIcons.star),
+                  const SizedBox(width: 4.0),
                   StreamBuilder(
                     stream: userProfileModel.snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
-                      String formattedPoints = '...';
+                      String formattedBalance = '...';
 
                       if (snapshot.hasData) {
                         DocumentSnapshot userProfile =
                             snapshot.data.documents.first;
 
-                        double points = userProfile.data['points'].toDouble();
+                        double balance = userProfile.data['balance'].toDouble();
 
                         NumberFormat numberFormat =
                             NumberFormat.currency(symbol: '');
 
-                        formattedPoints = numberFormat.format(points);
+                        formattedBalance = numberFormat.format(balance);
                       }
 
                       return Text(
-                        formattedPoints,
+                        formattedBalance,
                         style: theme.textTheme.title,
                       );
                     },
                   ),
                   const SizedBox(width: 8.0),
-                  Text('points available'),
+                  Text('available'),
                 ],
               ),
               const SizedBox(height: 16.0),
               TextFormField(
                 autofocus: true,
-                controller: _betAmountController,
+                controller: _wagerController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Bet amount',
-                  suffixText: 'Points',
+                  suffixIcon: Icon(FeatherIcons.star),
                 ),
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 maxLines: 1,
@@ -81,6 +86,8 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
                   if (value.isEmpty) {
                     return 'Please enter a bet amount';
                   } else if (double.tryParse(value) == null) {
+                    return 'Invalid bet amount';
+                  } else if (!(double.tryParse(value) > 0)) {
                     return 'Invalid bet amount';
                   }
                 },
@@ -127,31 +134,33 @@ class _TrackBetCreateFormState extends State<TrackBetCreateForm> {
       return;
     }
 
-    // TODO
-    double betAmount = double.parse(_betAmountController.text);
+    double wager = double.parse(_wagerController.text);
 
     setState(() {
       _busy = true;
     });
 
     DocumentSnapshot userProfile = await userProfileModel.get();
-    if (userProfile.data['points'] < betAmount) {
+    if (userProfile.data['balance'] < wager) {
       setState(() {
         _busy = false;
       });
 
-      String errorMessage = 'Insufficient points for this bet.';
+      String errorMessage = 'Insufficient balance for this bet.';
       Scaffold.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
       return;
     }
 
     // Remove any watch
-    DocumentSnapshot watch = await trackWatchModel.get(widget.trackId);
+    DocumentSnapshot watch = await trackWatchModel.get(widget.track.id);
     if (watch != null) {
       watch.reference.delete();
     }
 
-    DocumentReference bet = await trackBetModel.add(widget.trackId, betAmount);
+    DocumentReference bet = await trackBetModel.add(
+        trackId: widget.track.id,
+        wager: wager,
+        popularity: widget.track.popularity);
     if (bet == null) {
       // Failed to create bet
       setState(() {

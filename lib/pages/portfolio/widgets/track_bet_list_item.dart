@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
+import 'package:tasty_tracks/pages/album/album.dart';
 import 'package:tasty_tracks/pages/album/widgets/album_image.dart';
+import 'package:tasty_tracks/pages/artist/artist.dart';
 
-enum MenuActions { removeWatch, viewAlbum, viewArtist }
+enum MenuActions { viewAlbum, viewArtist }
 
 class TrackBetListItem extends StatelessWidget {
   const TrackBetListItem({
@@ -22,7 +25,17 @@ class TrackBetListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-    DateTime createdTimestamp = trackBet.data['created_timestamp'];
+
+    DateTime createdTimestamp =
+        trackBet.data['created_timestamp'] ?? DateTime.now();
+    double initialWager = trackBet.data['initial_wager'];
+    int initialPopularity = trackBet.data['initial_popularity'];
+    int popularity = track.popularity;
+    // TODO Temporary outcome calculation
+    double outcome = (popularity / initialPopularity) * initialWager;
+    double change = outcome - initialWager;
+
+    NumberFormat numberFormat = NumberFormat.currency(symbol: '');
 
     return ListTile(
       leading: Hero(
@@ -35,29 +48,52 @@ class TrackBetListItem extends StatelessWidget {
       ),
       title: Text(
         track.name,
-        style: theme.textTheme.subhead,
+        style: theme.textTheme.title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       // TODO Display Explicit and other data in subtitle
       subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${track.popularity}/100 popularity'),
-          Text('Added ${DateFormat.yMMMd().format(createdTimestamp)}')
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text('${numberFormat.format(initialWager)}'),
+              Text('placed ${DateFormat.yMMMd().format(createdTimestamp)}'),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                children: [
+                  Icon(FeatherIcons.star, size: 18.0),
+                  const SizedBox(width: 4.0),
+                  Text(
+                    numberFormat.format(outcome),
+                    style: theme.textTheme.title,
+                  ),
+                ],
+              ),
+              Text(
+                '${popularity} popularity',
+                style: theme.textTheme.subtitle,
+              ),
+            ],
+          ),
         ],
       ),
+      isThreeLine: true,
       trailing: PopupMenuButton(
         onSelected: (MenuActions result) {
           switch (result) {
-            case MenuActions.removeWatch:
-              // TODO
-              break;
             case MenuActions.viewAlbum:
-              // TODO
+              _viewAlbum(context);
               break;
             case MenuActions.viewArtist:
-              // TODO
+              _viewArtist(context);
               break;
           }
         },
@@ -70,14 +106,28 @@ class TrackBetListItem extends StatelessWidget {
                 value: MenuActions.viewArtist,
                 child: Text('View artist'),
               ),
-              PopupMenuItem(
-                value: MenuActions.removeWatch,
-                child: Text('Remove watch'),
-              ),
             ],
       ),
       onTap: () {
         onTap(track);
+      },
+    );
+  }
+
+  _viewAlbum(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      AlbumPage.routeName,
+      arguments: {
+        'album_id': track.album.id,
+      },
+    );
+  }
+
+  _viewArtist(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      ArtistPage.routeName,
+      arguments: {
+        'artist_id': track.artists.first.id,
       },
     );
   }
