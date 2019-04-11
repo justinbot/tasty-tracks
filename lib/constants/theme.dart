@@ -27,9 +27,9 @@ ThemeData _buildTastyTracksTheme() {
   return base.copyWith(
     // Disabled slider is invisible on black background
     sliderTheme: base.sliderTheme.copyWith(
-      disabledThumbColor: Colors.white.withOpacity(0.6),
-      disabledActiveTrackColor: Colors.white.withOpacity(0.6),
-      disabledInactiveTrackColor: Colors.white.withOpacity(0.3),
+      disabledThumbColor: Colors.white70,
+      disabledActiveTrackColor: Colors.white54,
+      disabledInactiveTrackColor: Colors.white30,
     ),
   );
 }
