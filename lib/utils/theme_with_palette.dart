@@ -7,7 +7,9 @@ ThemeData themeWithPalette(ThemeData theme, PaletteGenerator palette) {
     // Try to get a color from the palette to use as an accent
     Color sampledAccentColor = palette.lightVibrantColor?.color ??
         palette.vibrantColor?.color ??
-        palette.lightMutedColor?.color;
+        palette.darkVibrantColor?.color ??
+        palette.lightMutedColor?.color ??
+        palette.mutedColor?.color;
     if (sampledAccentColor != null) {
       theme = theme.copyWith(accentColor: sampledAccentColor);
     }
