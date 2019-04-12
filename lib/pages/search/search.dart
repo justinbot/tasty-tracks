@@ -82,44 +82,49 @@ class _SearchPageState extends State<SearchPage> {
       // Navigate to details page for selected item
       if (selectedItem is spotify.AlbumSimple) {
         searchHistoryModel.addAlbum(selectedItem);
+        String imageUrl;
+        if (selectedItem.images.isNotEmpty) {
+          imageUrl = selectedItem.images.first.url;
+        }
+
         Navigator.of(context).pushNamed(
           AlbumPage.routeName,
           arguments: {
             'album_id': selectedItem.id,
-            'album_image_url': selectedItem.images.first.url,
+            'album_image_url': imageUrl,
             'hero_suffix': '${selectedItem.id}-search',
           },
         );
       } else if (selectedItem is spotify.Artist) {
         searchHistoryModel.addArtist(selectedItem);
+        String imageUrl;
+        if (selectedItem.images.isNotEmpty) {
+          imageUrl = selectedItem.images.first.url;
+        }
+
         Navigator.of(context).pushNamed(
           ArtistPage.routeName,
           arguments: {
             'artist_id': selectedItem.id,
-            'artist_image_url': selectedItem.images.first.url,
+            'artist_image_url': imageUrl,
             'hero_suffix': '${selectedItem.id}-search',
           },
         );
       } else if (selectedItem is spotify.Track) {
         searchHistoryModel.addTrack(selectedItem);
+        String imageUrl;
         if (selectedItem.album.images.isNotEmpty) {
-          Navigator.of(context).pushNamed(
-            TrackPage.routeName,
-            arguments: {
-              'track_id': selectedItem.id,
-              'track_image_url': selectedItem.album.images.first.url,
-              'hero_suffix': '${selectedItem.id}-search',
-            },
-          );
-        } else {
-          Navigator.of(context).pushNamed(
-            TrackPage.routeName,
-            arguments: {
-              'track_id': selectedItem.id,
-              'hero_suffix': '${selectedItem.id}-search',
-            },
-          );
+          imageUrl = selectedItem.album.images.first.url;
         }
+
+        Navigator.of(context).pushNamed(
+          TrackPage.routeName,
+          arguments: {
+            'track_id': selectedItem.id,
+            'track_image_url': imageUrl,
+            'hero_suffix': '${selectedItem.id}-search',
+          },
+        );
       }
     }
   }

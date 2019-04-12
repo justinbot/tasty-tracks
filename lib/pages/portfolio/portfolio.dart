@@ -8,6 +8,7 @@ import 'package:tasty_tracks/models/user_profile_model.dart';
 import 'package:tasty_tracks/pages/portfolio/widgets/portfolio_app_bar.dart';
 import 'package:tasty_tracks/pages/portfolio/widgets/track_bets.dart';
 import 'package:tasty_tracks/pages/portfolio/widgets/track_watches.dart';
+import 'package:tasty_tracks/pages/portfolio/widgets/transaction_history.dart';
 import 'package:tasty_tracks/widgets/error_page.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -63,7 +64,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
                   model: _trackWatchModel,
                   child: TrackWatches(),
                 ),
-                Text('History'),
+                TransactionHistory(),
               ],
             ),
           ),

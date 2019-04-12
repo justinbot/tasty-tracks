@@ -5,6 +5,7 @@ import 'package:spotify/spotify_io.dart' as spotify;
 import 'package:tasty_tracks/pages/artist/widgets/artist_app_bar.dart';
 import 'package:tasty_tracks/pages/artist/widgets/artist_details.dart';
 import 'package:tasty_tracks/pages/artist/widgets/artist_image.dart';
+import 'package:tasty_tracks/pages/artist/widgets/artist_placeholder.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 import 'package:tasty_tracks/utils/theme_with_palette.dart';
 import 'package:tasty_tracks/widgets/error_page.dart';
@@ -51,19 +52,17 @@ class _ArtistPageState extends State<ArtistPage> {
         ),
       );
     } else if (_isBusy) {
-      // TODO Placeholder ArtistDetails
-      return Scaffold(
-        body: SafeArea(
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ),
+      return ArtistPlaceholder(
+        artistId: widget.artistId,
+        artistImageUrl: widget.artistImageUrl,
+        heroSuffix: widget.heroSuffix,
       );
+
     } else {
       ThemeData theme = themeWithPalette(Theme.of(context), _palette);
 
       Widget artistImage = Hero(
-        tag: 'trackImageHero-${widget.heroSuffix ?? _artist.id}',
+        tag: 'artistImageHero-${widget.heroSuffix ?? _artist.id}',
         child: Material(
           elevation: 8,
           child: ArtistImage(

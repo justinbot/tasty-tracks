@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 
+import 'package:tasty_tracks/pages/leaderboard/leaderboard.dart';
 import 'package:tasty_tracks/pages/portfolio/portfolio.dart';
 import 'package:tasty_tracks/pages/search/search.dart';
 
@@ -16,7 +17,7 @@ class _NavigationPageState extends State<NavigationPage> {
   final _pages = <Widget>[
     PortfolioPage(),
     SearchPage(),
-    Text('TODO Leaderboard'),
+    LeaderboardPage(),
   ];
 
   @override
