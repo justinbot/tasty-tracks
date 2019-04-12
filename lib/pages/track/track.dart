@@ -66,7 +66,7 @@ class _TrackPageState extends State<TrackPage> {
         ),
       );
     } else if (_isBusy) {
-      return TrackDetailsPlaceholder(
+      return TrackPlaceholder(
         trackId: widget.trackId,
         trackImageUrl: widget.trackImageUrl,
         heroSuffix: widget.heroSuffix,

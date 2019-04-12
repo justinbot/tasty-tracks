@@ -35,6 +35,13 @@ class TrackBetListItem extends StatelessWidget {
     double outcome = (popularity / initialPopularity) * initialWager;
     double change = outcome - initialWager;
 
+    String changePrefix = '';
+    if (change < 0) {
+      changePrefix = '-';
+    } else if (change > 0) {
+      changePrefix = '+';
+    }
+
     NumberFormat numberFormat = NumberFormat.currency(symbol: '');
 
     return ListTile(
@@ -48,7 +55,7 @@ class TrackBetListItem extends StatelessWidget {
       ),
       title: Text(
         track.name,
-        style: theme.textTheme.title,
+        style: theme.textTheme.subhead,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -57,15 +64,15 @@ class TrackBetListItem extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('${numberFormat.format(initialWager)}'),
-              Text('placed ${DateFormat.yMMMd().format(createdTimestamp)}'),
+              Text(
+                '${numberFormat.format(initialWager)} — placed ${DateFormat.yMMMd().format(createdTimestamp)}',
+                style: theme.textTheme.caption,
+              ),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Row(
                 children: [
@@ -75,10 +82,15 @@ class TrackBetListItem extends StatelessWidget {
                     numberFormat.format(outcome),
                     style: theme.textTheme.title,
                   ),
+                  const SizedBox(width: 4.0),
+                  Text(
+                    '(${changePrefix}${change})',
+                    style: theme.textTheme.subtitle,
+                  ),
                 ],
               ),
               Text(
-                '${popularity} popularity',
+                '${popularity} /100',
                 style: theme.textTheme.subtitle,
               ),
             ],

@@ -8,15 +8,46 @@ class TrackSearchItem extends StatelessWidget {
     Key key,
     this.onTap,
     this.track,
+    this.trailing,
   }) : super(key: key);
 
   final onTap;
   final spotify.Track track;
+  final Widget trailing;
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     String artistNames = track.artists.map((artist) => artist.name).join(', ');
+
+    List<Widget> subtitle = [
+      Text(
+        '${track.popularity}',
+        style: theme.textTheme.subhead,
+      ),
+      Text(
+        ' /100 popularity',
+      ),
+    ];
+
+    if (track.explicit) {
+      subtitle.insertAll(0, [
+        Card(
+          margin: EdgeInsets.zero,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 4.0,
+              vertical: 3.0,
+            ),
+            child: Text(
+              'explicit',
+              style: theme.textTheme.caption.copyWith(letterSpacing: 0.6),
+            ),
+          ),
+        ),
+        Text(' — '),
+      ]);
+    }
 
     return ListTile(
       leading: Hero(
@@ -27,12 +58,22 @@ class TrackSearchItem extends StatelessWidget {
           rounded: true,
         ),
       ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 4.0),
+            child: Row(
+              children: subtitle,
+            ),
+          ),
+          Text(artistNames),
+        ],
+      ),
       title: Text(
         track.name,
-        style: theme.textTheme.subhead,
       ),
-      // TODO Display Explicit and other data in subtitle
-      subtitle: Text(artistNames),
+      trailing: trailing,
       onTap: () {
         onTap(track);
       },

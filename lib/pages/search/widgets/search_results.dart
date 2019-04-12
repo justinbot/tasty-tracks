@@ -10,13 +10,13 @@ import 'package:tasty_tracks/pages/search/widgets/track_search_item.dart';
 class SearchResults extends StatelessWidget {
   const SearchResults({
     Key key,
-    this.onTapItem,
+    this.onSelectedItem,
     this.tracks,
     this.artists,
     this.albums,
   }) : super(key: key);
 
-  final onTapItem;
+  final onSelectedItem;
   final List<spotify.Track> tracks;
   final List<spotify.Artist> artists;
   final List<spotify.AlbumSimple> albums;
@@ -38,6 +38,12 @@ class SearchResults extends StatelessWidget {
       combinedResultsItems
         ..add(HeaderSearchItem(
           label: 'Tracks',
+          trailing: FlatButton(
+            child: Text('See all'),
+            onPressed: () {
+              // TODO
+            },
+          ),
         ))
         ..addAll(trackItems);
     }
@@ -52,6 +58,12 @@ class SearchResults extends StatelessWidget {
       combinedResultsItems
         ..add(HeaderSearchItem(
           label: 'Artists',
+          trailing: FlatButton(
+            child: Text('See all'),
+            onPressed: () {
+              // TODO
+            },
+          ),
         ))
         ..addAll(artistItems);
     }
@@ -66,6 +78,12 @@ class SearchResults extends StatelessWidget {
       combinedResultsItems
         ..add(HeaderSearchItem(
           label: 'Albums',
+          trailing: FlatButton(
+            child: Text('See all'),
+            onPressed: () {
+              // TODO
+            },
+          ),
         ))
         ..addAll(albumItems);
     }
@@ -95,6 +113,6 @@ class SearchResults extends StatelessWidget {
   }
 
   _handleSelectedItem(Object result) {
-    onTapItem(result);
+    onSelectedItem(result);
   }
 }

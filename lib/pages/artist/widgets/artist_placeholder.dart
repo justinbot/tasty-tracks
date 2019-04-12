@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 
-class TrackPlaceholder extends StatelessWidget {
-  const TrackPlaceholder({
+class ArtistPlaceholder extends StatelessWidget {
+  const ArtistPlaceholder({
     Key key,
-    this.trackId,
-    this.trackImageUrl,
+    this.artistId,
+    this.artistImageUrl,
     this.heroSuffix,
   }) : super(key: key);
 
-  final String trackId;
-  final String trackImageUrl;
+  final String artistId;
+  final String artistImageUrl;
   final String heroSuffix;
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
 
-    Widget trackImage;
+    Widget artistImage;
 
-    if (trackImageUrl != null) {
-      trackImage = Image.network(
-        trackImageUrl,
+    if (artistImageUrl != null) {
+      artistImage = Image.network(
+        artistImageUrl,
         fit: BoxFit.cover,
       );
     } else {
-      trackImage = Image.asset(
-        'assets/album_image_placeholder.png',
+      artistImage = Image.asset(
+        'assets/artist_image_placeholder.png',
         fit: BoxFit.cover,
       );
     }
@@ -43,8 +43,8 @@ class TrackPlaceholder extends StatelessWidget {
               child: Column(
                 children: [
                   Hero(
-                    tag: 'trackImageHero-${heroSuffix ?? trackId}',
-                    child: trackImage,
+                    tag: 'artistImageHero-${heroSuffix ?? artistId}',
+                    child: artistImage,
                   ),
                 ],
               ),

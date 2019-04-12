@@ -6,6 +6,7 @@ import 'package:tasty_tracks/pages/artist/artist.dart';
 import 'package:tasty_tracks/pages/auth/landing.dart';
 import 'package:tasty_tracks/pages/auth/sign_in.dart';
 import 'package:tasty_tracks/pages/auth/sign_up.dart';
+import 'package:tasty_tracks/pages/leaderboard/leaderboard.dart';
 import 'package:tasty_tracks/pages/navigation.dart';
 import 'package:tasty_tracks/pages/settings/settings.dart';
 import 'package:tasty_tracks/pages/track/track.dart';
@@ -22,6 +23,7 @@ class TastyTracksApp extends StatelessWidget {
       onGenerateRoute: _handleRoute,
       routes: {
         LandingPage.routeName: (BuildContext context) => LandingPage(),
+        LeaderboardPage.routeName: (BuildContext context) => LeaderboardPage(),
         NavigationPage.routeName: (BuildContext context) => NavigationPage(),
         OnboardPage.routeName: (BuildContext context) => OnboardPage(),
         SettingsPage.routeName: (BuildContext context) => SettingsPage(),
@@ -65,6 +67,8 @@ Route<dynamic> _handleRoute(RouteSettings settings) {
         settings: settings,
         builder: (BuildContext context) => AlbumPage(
               albumId: arguments['album_id'],
+              albumImageUrl: arguments['album_image_url'],
+              heroSuffix: arguments['hero_suffix'],
             ),
       );
 
@@ -77,6 +81,8 @@ Route<dynamic> _handleRoute(RouteSettings settings) {
         settings: settings,
         builder: (BuildContext context) => ArtistPage(
               artistId: arguments['artist_id'],
+              artistImageUrl: arguments['artist_image_url'],
+              heroSuffix: arguments['hero_suffix'],
             ),
       );
 

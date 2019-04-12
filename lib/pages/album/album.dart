@@ -64,7 +64,7 @@ class _AlbumPageState extends State<AlbumPage> {
       ThemeData theme = themeWithPalette(Theme.of(context), _palette);
 
       Widget albumImage = Hero(
-        tag: 'trackImageHero-${widget.heroSuffix ?? _album.id}',
+        tag: 'albumImageHero-${widget.heroSuffix ?? _album.id}',
         child: Material(
           elevation: 8,
           child: AlbumImage(
