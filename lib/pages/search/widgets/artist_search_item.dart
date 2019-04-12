@@ -31,9 +31,13 @@ class ArtistSearchItem extends StatelessWidget {
         style: theme.textTheme.subhead,
       ),
       subtitle: Row(
-        children: <Widget>[
+        children: [
           Text(
-            '${artist.popularity}/100 popularity',
+            '${artist.popularity}',
+            style: theme.textTheme.subhead,
+          ),
+          Text(
+            ' /100 popularity',
           ),
         ],
       ),

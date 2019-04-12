@@ -43,7 +43,7 @@ class SearchHistory extends StatelessWidget {
                   padding: EdgeInsets.only(top: 16.0),
                   child: Text(
                     'Recent searches',
-                    style: theme.textTheme.title,
+                    style: theme.textTheme.subhead,
                     textAlign: TextAlign.center,
                   ),
                 ),
