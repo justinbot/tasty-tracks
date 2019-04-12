@@ -8,10 +8,12 @@ class AlbumSearchItem extends StatelessWidget {
     Key key,
     this.onTap,
     this.album,
+    this.trailing,
   }) : super(key: key);
 
   final onTap;
   final spotify.AlbumSimple album;
+  final Widget trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +29,12 @@ class AlbumSearchItem extends StatelessWidget {
           rounded: true,
         ),
       ),
+      subtitle: Text(artistNames),
       title: Text(
         album.name,
         style: theme.textTheme.subhead,
       ),
-      subtitle: Text(artistNames),
+      trailing: trailing,
       onTap: () {
         onTap(album);
       },

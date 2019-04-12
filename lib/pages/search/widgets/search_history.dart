@@ -12,10 +12,10 @@ import 'package:tasty_tracks/pages/search/widgets/track_search_item.dart';
 class SearchHistory extends StatelessWidget {
   const SearchHistory({
     Key key,
-    this.onTapItem,
+    this.onSelectedItem,
   }) : super(key: key);
 
-  final onTapItem;
+  final onSelectedItem;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class SearchHistory extends StatelessWidget {
           future: Future.wait([
             history.albumItems(),
             history.artistItems(),
-            history.trackItems()
+            history.trackItems(),
           ]),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -39,13 +39,10 @@ class SearchHistory extends StatelessWidget {
               bool hasResults = false;
 
               combinedResultsItems.add(
-                Padding(
-                  padding: EdgeInsets.only(top: 16.0),
-                  child: Text(
-                    'Recent searches',
-                    style: theme.textTheme.subhead,
-                    textAlign: TextAlign.center,
-                  ),
+                Text(
+                  'Recent searches',
+                  style: theme.textTheme.subhead,
+                  textAlign: TextAlign.center,
                 ),
               );
 
@@ -55,6 +52,15 @@ class SearchHistory extends StatelessWidget {
                     tracks.map((track) => TrackSearchItem(
                           onTap: _handleSelectedItem,
                           track: track,
+                          trailing: IconButton(
+                            onPressed: () {
+                              // TODO
+                            },
+                            icon: Icon(
+                              FeatherIcons.x,
+                              color: theme.disabledColor,
+                            ),
+                          ),
                         ));
 
                 combinedResultsItems
@@ -70,6 +76,15 @@ class SearchHistory extends StatelessWidget {
                     artists.map((artist) => ArtistSearchItem(
                           onTap: _handleSelectedItem,
                           artist: artist,
+                          trailing: IconButton(
+                            onPressed: () {
+                              // TODO
+                            },
+                            icon: Icon(
+                              FeatherIcons.x,
+                              color: theme.disabledColor,
+                            ),
+                          ),
                         ));
 
                 combinedResultsItems
@@ -85,6 +100,15 @@ class SearchHistory extends StatelessWidget {
                     albums.map((album) => AlbumSearchItem(
                           onTap: _handleSelectedItem,
                           album: album,
+                          trailing: IconButton(
+                            onPressed: () {
+                              // TODO
+                            },
+                            icon: Icon(
+                              FeatherIcons.x,
+                              color: theme.disabledColor,
+                            ),
+                          ),
                         ));
 
                 combinedResultsItems
@@ -98,7 +122,7 @@ class SearchHistory extends StatelessWidget {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                    children: [
                       Icon(
                         FeatherIcons.search,
                         size: 64.0,
@@ -121,11 +145,16 @@ class SearchHistory extends StatelessWidget {
                       onPressed: () {
                         history.clear();
                       },
-                      child: Text('Clear recent searches', style: theme.textTheme.caption,),
+                      child: Text(
+                        'Clear recent searches',
+                        style: theme.textTheme.caption,
+                      ),
                     ),
                   ),
                 );
-                return ListView(children: combinedResultsItems);
+                return ListView(
+                    padding: EdgeInsets.symmetric(vertical: 32.0),
+                    children: combinedResultsItems);
               }
             } else if (snapshot.hasError) {
               // TODO Log to error reporting
@@ -144,6 +173,6 @@ class SearchHistory extends StatelessWidget {
   }
 
   _handleSelectedItem(Object result) {
-    onTapItem(result);
+    onSelectedItem(result);
   }
 }

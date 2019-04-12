@@ -23,19 +23,19 @@ class _SearchPageState extends State<SearchPage> {
   List<spotify.Artist> searchHistoryArtists = List();
   List<spotify.Album> searchHistoryAlbums = List();
 
-  final history = SearchHistoryModel();
+  final searchHistoryModel = SearchHistoryModel();
 
   @override
   initState() {
     super.initState();
 
-    history.loadItems();
+    searchHistoryModel.loadItems();
   }
 
   @override
   Widget build(BuildContext context) {
     return ScopedModel<SearchHistoryModel>(
-      model: history,
+      model: searchHistoryModel,
       child: Scaffold(
         appBar: AppBar(
           flexibleSpace: SafeArea(
@@ -44,12 +44,13 @@ class _SearchPageState extends State<SearchPage> {
               child: RaisedButton(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
+                  children: [
                     Icon(
                       FeatherIcons.search,
                       size: 18.0,
                     ),
-                    Text('Search'),
+                    const SizedBox(width: 8.0),
+                    Text('Tracks, artists, or albums'),
                   ],
                 ),
                 color: Colors.white,
@@ -58,7 +59,9 @@ class _SearchPageState extends State<SearchPage> {
                   // TODO Consider not using showSearch for better behavior
                   showSearch(
                     context: context,
-                    delegate: MusicSearchDelegate(),
+                    delegate: MusicSearchDelegate(
+                      searchHistoryModel: searchHistoryModel,
+                    ),
                   ).then((selectedItem) {
                     _handleSelectedItem(selectedItem);
                   });
@@ -68,7 +71,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
         body: SearchHistory(
-          onTapItem: _handleSelectedItem,
+          onSelectedItem: _handleSelectedItem,
         ),
       ),
     );
@@ -78,25 +81,27 @@ class _SearchPageState extends State<SearchPage> {
     if (selectedItem != null) {
       // Navigate to details page for selected item
       if (selectedItem is spotify.AlbumSimple) {
-        history.addAlbum(selectedItem);
+        searchHistoryModel.addAlbum(selectedItem);
         Navigator.of(context).pushNamed(
           AlbumPage.routeName,
           arguments: {
             'album_id': selectedItem.id,
+            'album_image_url': selectedItem.images.first.url,
             'hero_suffix': '${selectedItem.id}-search',
           },
         );
-      } else if (selectedItem is spotify.ArtistSimple) {
-        history.addArtist(selectedItem);
+      } else if (selectedItem is spotify.Artist) {
+        searchHistoryModel.addArtist(selectedItem);
         Navigator.of(context).pushNamed(
           ArtistPage.routeName,
           arguments: {
             'artist_id': selectedItem.id,
+            'artist_image_url': selectedItem.images.first.url,
             'hero_suffix': '${selectedItem.id}-search',
           },
         );
       } else if (selectedItem is spotify.Track) {
-        history.addTrack(selectedItem);
+        searchHistoryModel.addTrack(selectedItem);
         if (selectedItem.album.images.isNotEmpty) {
           Navigator.of(context).pushNamed(
             TrackPage.routeName,

@@ -1,11 +1,21 @@
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'package:spotify/spotify_io.dart' as spotify;
 
+import 'package:tasty_tracks/models/search_history_model.dart';
+import 'package:tasty_tracks/pages/search/widgets/search_history.dart';
 import 'package:tasty_tracks/pages/search/widgets/search_results.dart';
 import 'package:tasty_tracks/spotify_api.dart';
 
 class MusicSearchDelegate extends SearchDelegate {
+  MusicSearchDelegate({
+    Key key,
+    this.searchHistoryModel,
+  });
+
+  final SearchHistoryModel searchHistoryModel;
+
   Future<Map<spotify.SearchType, List<Object>>> searchRequest;
   String lastQuery;
 
@@ -39,9 +49,13 @@ class MusicSearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     if (query.isEmpty) {
-      // TODO
-      return Center(
-        child: Text('TODO Recent searches'),
+      return ScopedModel(
+        model: searchHistoryModel,
+        child: SearchHistory(
+          onSelectedItem: (selectedItem) {
+            close(context, selectedItem);
+          },
+        ),
       );
     } else {
       _handleSearchRequest();
@@ -51,7 +65,7 @@ class MusicSearchDelegate extends SearchDelegate {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return SearchResults(
-              onTapItem: (selectedItem) {
+              onSelectedItem: (selectedItem) {
                 close(context, selectedItem);
               },
               tracks: snapshot.data[spotify.SearchType.track],

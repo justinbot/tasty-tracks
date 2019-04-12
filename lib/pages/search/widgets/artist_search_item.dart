@@ -8,10 +8,12 @@ class ArtistSearchItem extends StatelessWidget {
     Key key,
     this.onTap,
     this.artist,
+    this.trailing,
   }) : super(key: key);
 
   final onTap;
   final spotify.Artist artist;
+  final Widget trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +28,7 @@ class ArtistSearchItem extends StatelessWidget {
           rounded: true,
         ),
       ),
-      title: Text(
-        artist.name,
-        style: theme.textTheme.subhead,
-      ),
+      trailing: trailing,
       subtitle: Row(
         children: [
           Text(
@@ -40,6 +39,10 @@ class ArtistSearchItem extends StatelessWidget {
             ' /100 popularity',
           ),
         ],
+      ),
+      title: Text(
+        artist.name,
+        style: theme.textTheme.subhead,
       ),
       onTap: () {
         onTap(artist);

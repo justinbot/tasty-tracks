@@ -8,10 +8,12 @@ class TrackSearchItem extends StatelessWidget {
     Key key,
     this.onTap,
     this.track,
+    this.trailing,
   }) : super(key: key);
 
   final onTap;
   final spotify.Track track;
+  final Widget trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +58,6 @@ class TrackSearchItem extends StatelessWidget {
           rounded: true,
         ),
       ),
-      title: Text(
-        track.name,
-      ),
-      // TODO Display Explicit and other data in subtitle
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -72,6 +70,10 @@ class TrackSearchItem extends StatelessWidget {
           Text(artistNames),
         ],
       ),
+      title: Text(
+        track.name,
+      ),
+      trailing: trailing,
       onTap: () {
         onTap(track);
       },
