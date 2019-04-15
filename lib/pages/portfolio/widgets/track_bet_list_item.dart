@@ -36,9 +36,7 @@ class TrackBetListItem extends StatelessWidget {
     double change = outcome - initialWager;
 
     String changePrefix = '';
-    if (change < 0) {
-      changePrefix = '-';
-    } else if (change > 0) {
+    if (change > 0) {
       changePrefix = '+';
     }
 
@@ -84,7 +82,7 @@ class TrackBetListItem extends StatelessWidget {
                   ),
                   const SizedBox(width: 4.0),
                   Text(
-                    '(${changePrefix}${change})',
+                    '($changePrefix${numberFormat.format(change)})',
                     style: theme.textTheme.subtitle,
                   ),
                 ],

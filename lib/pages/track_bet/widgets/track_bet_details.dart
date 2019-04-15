@@ -30,6 +30,11 @@ class TrackBetDetails extends StatelessWidget {
 
     double change = outcome - initialWager;
 
+    String changePrefix = '';
+    if (change > 0) {
+      changePrefix = '+';
+    }
+
     NumberFormat numberFormat = NumberFormat.currency(symbol: '');
 
     return Container(
@@ -61,7 +66,7 @@ class TrackBetDetails extends StatelessWidget {
             ),
             const SizedBox(height: 8.0),
             Text(
-              '+${numberFormat.format(change)}',
+              '$changePrefix${numberFormat.format(change)}',
               style: theme.textTheme.subhead,
             ),
             Row(
