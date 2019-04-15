@@ -6,4 +6,4 @@ Tasty Tracks is a mobile app which uses data on song popularity to create an int
 
 [Getting started](docs/getting_started.md)
 
-You can find documentation for Flock [here.](docs/index.md)
+[Read the docs](docs/index.md)
