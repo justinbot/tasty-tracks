@@ -1,9 +1,11 @@
 <img src="https://user-images.githubusercontent.com/20007954/53214621-3e5fe680-361b-11e9-842c-42b2f5676b51.png" alt="Tasty Tracks" width="30%">
 
 ## What is Tasty Tracks?
-I'm glad you asked. Tasty Tracks is a mobile app using data from Spotify to create a realtime game experience around music trends.
+I'm glad you asked! Tasty Tracks is a mobile app using data from Spotify to create a realtime game experience around music trends.
 
-Built with **Flutter** and **Firebase** as an independent research project with [Rensselaer Center for Open Source](https://rcos.io/).
+Built with [Flutter](https://flutter.dev/), [Firebase](https://firebase.google.com/), and [Spotify Web API](https://developer.spotify.com/documentation/web-api/).
+
+Developed by Justin Carlson as an independent research project with [Rensselaer Center for Open Source](https://rcos.io/).
 
 ## How does it work?
 Tasty Tracks works like this:
@@ -14,7 +16,7 @@ Tasty Tracks works like this:
 
 ## Screenshots
 
-<img src="https://user-images.githubusercontent.com/20007954/89972865-ecef5100-dc2c-11ea-9e91-9a00a7223a40.png" width="25%">        <img src="https://user-images.githubusercontent.com/20007954/89972866-ecef5100-dc2c-11ea-93d6-5124ba2c623e.png" width="25%">        <img src="https://user-images.githubusercontent.com/20007954/95536412-0573b180-09b9-11eb-96d3-5462e93bc6bc.png" width="25%">        <img src="https://user-images.githubusercontent.com/20007954/95536473-20462600-09b9-11eb-9e28-8032d11474bd.png" width="25%">
+<img src="https://user-images.githubusercontent.com/20007954/89972865-ecef5100-dc2c-11ea-9e91-9a00a7223a40.png" width="20%">        <img src="https://user-images.githubusercontent.com/20007954/89972866-ecef5100-dc2c-11ea-93d6-5124ba2c623e.png" width="20%">        <img src="https://user-images.githubusercontent.com/20007954/95536412-0573b180-09b9-11eb-96d3-5462e93bc6bc.png" width="20%">        <img src="https://user-images.githubusercontent.com/20007954/95536473-20462600-09b9-11eb-9e28-8032d11474bd.png" width="20%">
 
 
 ## Documentation
